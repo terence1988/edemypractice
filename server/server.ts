@@ -10,14 +10,14 @@ const app = express();
 
 // db
 mongoose
-  .connect(process.env.DATABASE, {
-    userNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
-  .then(() => console.log("**DB CONNECTED**"))
-  .catch((err) => console.log("DB CONNECTION ERR => ", err));
+	.connect(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}`, {
+		useNewUrlParser: true,
+		useFindAndModify: false,
+		useUnifiedTopology: true,
+		useCreateIndex: true,
+	})
+	.then(() => console.log("**DB CONNECTED**"))
+	.catch((err) => console.log("DB CONNECTION ERR => ", err));
 
 // apply middlewares
 app.use(cors());

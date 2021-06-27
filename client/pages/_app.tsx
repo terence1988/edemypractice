@@ -4,12 +4,12 @@ import "antd/dist/antd.css";
 import "../public/css/styles.css";
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <>
-      <TopNav />
-      <Component {...pageProps} />
-    </>
-  );
+	return (
+		<>
+			<TopNav />
+			<Component {...pageProps} />
+		</>
+	);
 }
 
 export default MyApp;
