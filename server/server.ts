@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { readdirSync } from "fs";
+//import { readdirSync } from "fs";
 import mongoose from "mongoose";
 const morgan = require("morgan");
 require("dotenv").config();
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // route
-readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
+//readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
 
 // port
 const port = process.env.PORT || 8000;
