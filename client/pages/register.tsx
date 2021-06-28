@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import axios from "axios";
 
 const Register = () => {
@@ -6,7 +6,7 @@ const Register = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const handleSubmit = async (e: Event) => {
+	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const { data } = await axios.post(`http://localhost:8000/api/register`, {
 			name,
@@ -30,7 +30,6 @@ const Register = () => {
 						placeholder="Enter name"
 						required
 					/>
-
 					<input
 						type="email"
 						className="form-control mb-4 p-4"
@@ -39,7 +38,6 @@ const Register = () => {
 						placeholder="Enter email"
 						required
 					/>
-
 					<input
 						type="password"
 						className="form-control mb-4 p-4"
@@ -47,6 +45,7 @@ const Register = () => {
 						onChange={(e) => setPassword(e.target.value)}
 						placeholder="Enter password"
 						required
+						minLength={8}
 					/>
 
 					<button type="submit" className="btn btn-block btn-primary">
