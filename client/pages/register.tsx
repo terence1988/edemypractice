@@ -1,19 +1,34 @@
 import { FormEvent, useState } from "react";
 import axios from "axios";
 
+//
+import { toast } from "react-toastify";
+
+//
+import { SyncOutlined } from "@ant-design/icons";
+
 const Register = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		const { data } = await axios.post(`http://localhost:8000/api/register`, {
-			name,
-			email,
-			password,
-		});
-		console.log("REGISTER RESPONSE", data);
+		try {
+			setIsLoading(true);
+			//.env.local will give ENV to client side via NEXT ssg/ssr
+			const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API}`, {
+				name,
+				email,
+				password,
+			});
+			toast.success("Registeration successful. Please login");
+			setIsLoading(false);
+		} catch (err) {
+			toast.error(err.response.data);
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -48,8 +63,12 @@ const Register = () => {
 						minLength={8}
 					/>
 
-					<button type="submit" className="btn btn-block btn-primary">
-						Submit
+					<button
+						type="submit"
+						className="btn btn-block btn-primary"
+						disabled={!name || !password || !email || isLoading}
+					>
+						{isLoading ? <SyncOutlined /> : "Submit"}
 					</button>
 				</form>
 			</div>

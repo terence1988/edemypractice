@@ -5,6 +5,9 @@ import mongoose from "mongoose";
 const morgan = require("morgan");
 require("dotenv").config();
 
+//routes
+import router from "./routes";
+
 // create express app
 const app = express();
 
@@ -23,6 +26,8 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+
+app.use(router);
 
 // route
 //readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
