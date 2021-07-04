@@ -1,11 +1,10 @@
 import { FormEvent, useState } from "react";
 import axios from "axios";
-
-//
+// toast for error messages
 import { toast } from "react-toastify";
-
-//
+//loading spinner
 import { SyncOutlined } from "@ant-design/icons";
+import Link from "next/link";
 
 const Register = () => {
 	const [name, setName] = useState("");
@@ -18,7 +17,7 @@ const Register = () => {
 		try {
 			setIsLoading(true);
 			//.env.local will give ENV to client side via NEXT ssg/ssr
-			const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API}`, {
+			const { data } = await axios.post(`/register`, {
 				name,
 				email,
 				password,
@@ -71,6 +70,9 @@ const Register = () => {
 						{isLoading ? <SyncOutlined /> : "Submit"}
 					</button>
 				</form>
+				<p className="text-center p-3">
+					Already registered? <Link href="/login">login</Link>
+				</p>
 			</div>
 		</>
 	);
