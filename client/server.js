@@ -1,6 +1,6 @@
-import express from "express";
-import next from "next";
-import { createProxyMiddleware } from "http-proxy-middleware";
+const express = require("express");
+const next = require("next");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -12,7 +12,7 @@ app
 		const server = express();
 		if (dev) {
 			server.use(
-				"/",
+				"/api",
 				createProxyMiddleware({ target: "http://localhost:8000", changeOrigin: true })
 			);
 		}
@@ -30,3 +30,4 @@ app
 	.catch((err) => {
 		console.error(err);
 	});
+//export {}; //is a handy way to make a file a module without importing anything.

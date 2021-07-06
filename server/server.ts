@@ -2,11 +2,11 @@ import express from "express";
 import cors from "cors";
 //import { readdirSync } from "fs";
 import mongoose from "mongoose";
-const morgan = require("morgan");
-require("dotenv").config();
+import morgan from "morgan";
 
 //routes
 import router from "./routes";
+require("dotenv").config(); //This is scoped as well, use package.json
 
 // create express app
 const app = express();
@@ -36,3 +36,20 @@ app.use(router);
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
+
+// environment.d.ts
+
+// declare global {
+//   namespace NodeJS {
+//     interface ProcessEnv {
+//       GITHUB_AUTH_TOKEN: string;
+//       NODE_ENV: 'development' | 'production';
+//       PORT?: string;
+//       PWD: string;
+//     }
+//   }
+// }
+
+// // If this file has no import/export statements (i.e. is a script)
+// // convert it into a module by adding an empty export statement. It's better to change it heree
+// export {}

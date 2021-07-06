@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import validator from "validator";
 import jwt from "jsonwebtoken";
 import { hashPassword, comparePassword } from "../utils/hash";
+import bcrypt from "bcrypt";
 
 export const register = async (req: Request, res: Response) => {
 	try {
@@ -38,10 +39,11 @@ export const login = async (req: Request, res: Response) => {
 		const isMatched = await comparePassword(password, user.password);
 		if (!isMatched) return res.status(406).send("Invalid user name or password, please try again");
 		//create token
-		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-		// return user and token to client, exclude hashed password
-		delete user["password"];
+		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET!, { expiresIn: "7d" });
+		// return user and token to client, exclude hashed password -- JWT has undefined somewhere
+		user.password = "";
 		//send token in cookie which is part of response header
+		console.log(user);
 		res.cookie("token", token, {
 			httpOnly: true,
 			// secure: true,  //secure will only allow https

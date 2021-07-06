@@ -17,7 +17,7 @@ const Register = () => {
 		try {
 			setIsLoading(true);
 			//.env.local will give ENV to client side via NEXT ssg/ssr
-			const { data } = await axios.post(`/register`, {
+			const { data } = await axios.post(`/api/register`, {
 				name,
 				email,
 				password,
