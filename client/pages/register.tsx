@@ -1,16 +1,25 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect, useContext } from "react";
 import axios from "axios";
 // toast for error messages
 import { toast } from "react-toastify";
 //loading spinner
 import { SyncOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import router from "next/router";
+//user context
+import { UserContext } from "../contexts";
 
 const Register = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+
+	const { state, dispatch } = useContext(UserContext);
+
+	useEffect(() => {
+		state.user !== null ? router.push("/") : null;
+	}, [state.user]);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();

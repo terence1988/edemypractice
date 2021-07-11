@@ -8,6 +8,9 @@ import morgan from "morgan";
 import router from "./routes";
 require("dotenv").config(); //This is scoped as well, use package.json
 
+//cookie ?????
+import cookieParser from "cookie-parser";
+
 // create express app
 const app = express();
 
@@ -25,6 +28,7 @@ mongoose
 // apply middlewares
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(morgan("dev"));
 
 app.use(router);

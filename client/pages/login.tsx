@@ -75,8 +75,11 @@ const Login = () => {
 						{isLoading ? <SyncOutlined /> : "Submit"}
 					</button>
 				</form>
-				<p className="text-center p-3">
+				<p className="text-center pt-2">
 					Not yet registered? <Link href="/register">Register</Link>
+				</p>
+				<p className="text-center">
+					<Link href="/forgotpassword">Reset Password</Link>
 				</p>
 			</div>
 		</>
