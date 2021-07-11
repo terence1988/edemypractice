@@ -9,6 +9,7 @@ declare global {
 			AWS_REGION: string;
 			AWS_API_VERSION: string;
 			EMAIL_FROM: string;
+			STRIPE_SECRET: string;
 		}
 	}
 }

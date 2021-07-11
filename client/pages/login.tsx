@@ -27,7 +27,7 @@ const Login = () => {
 		try {
 			setIsLoading(true);
 			//.env.local will give ENV to client side via NEXT ssg/ssr
-			const { data } = await axios.post(`/api/login`, {
+			const { data } = await axios.post(`/login`, {
 				email,
 				password,
 			});
@@ -56,6 +56,7 @@ const Login = () => {
 						onChange={(e) => setEmail(e.target.value)}
 						placeholder="Enter email"
 						required
+						autoComplete="off"
 					/>
 					<input
 						type="password"
@@ -65,6 +66,7 @@ const Login = () => {
 						placeholder="Enter password"
 						required
 						minLength={8}
+						autoComplete="off"
 					/>
 
 					<button

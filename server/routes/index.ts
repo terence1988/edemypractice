@@ -10,6 +10,7 @@ import {
 	currentUser,
 	sendTestEmail,
 	forgetPassword,
+	resetPassword,
 } from "../controllers/auth";
 
 import { requireSignin } from "../middleware";
@@ -24,5 +25,6 @@ router.get("/api/currentUser", requireSignin, currentUser);
 router.get("/api/sendEmails", sendTestEmail);
 
 router.post("/api/forgetPassword", forgetPassword);
+router.post("/api/resetPassword", resetPassword);
 
 export default router;

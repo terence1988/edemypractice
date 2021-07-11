@@ -26,7 +26,7 @@ const Register = () => {
 		try {
 			setIsLoading(true);
 			//.env.local will give ENV to client side via NEXT ssg/ssr
-			const { data } = await axios.post(`/api/register`, {
+			const { data } = await axios.post(`/register`, {
 				name,
 				email,
 				password,
@@ -52,6 +52,7 @@ const Register = () => {
 						onChange={(e) => setName(e.target.value)}
 						placeholder="Enter name"
 						required
+						autoComplete="off"
 					/>
 					<input
 						type="email"
@@ -60,6 +61,7 @@ const Register = () => {
 						onChange={(e) => setEmail(e.target.value)}
 						placeholder="Enter email"
 						required
+						autoComplete="off"
 					/>
 					<input
 						type="password"
@@ -69,6 +71,7 @@ const Register = () => {
 						placeholder="Enter password"
 						required
 						minLength={8}
+						autoComplete="off"
 					/>
 
 					<button
