@@ -13,7 +13,11 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
+import healthCheck from "../controllers/healthCheck";
+
 import { requireSignin } from "../middleware";
+
+router.get("/api/healthCheck", healthCheck);
 
 router.post("/api/register", register);
 

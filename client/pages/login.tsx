@@ -27,17 +27,17 @@ const Login = () => {
 		try {
 			setIsLoading(true);
 			//.env.local will give ENV to client side via NEXT ssg/ssr
-			const { data } = await axios.post(`/login`, {
+			const { data } = await axios.post("/login", {
 				email,
 				password,
 			});
-			console.log("User response", data);
+			console.log(data);
 			dispatch({ type: "LOGIN", payload: data });
 			window.localStorage.setItem(`x-next-user`, JSON.stringify(data));
 			//redirect
-			router.push("/");
 			toast.success("Login successfully");
 			setIsLoading(false);
+			//setTimeout(() => router.push("/user"), 10000);
 		} catch (err) {
 			toast.error(err.response.data);
 			setIsLoading(false);
