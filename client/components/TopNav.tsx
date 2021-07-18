@@ -3,10 +3,12 @@ import { Menu } from "antd";
 import Link from "next/link";
 import {
 	AppstoreOutlined,
+	CarryOutOutlined,
 	CoffeeOutlined,
 	DotChartOutlined,
 	LoginOutlined,
 	LogoutOutlined,
+	TeamOutlined,
 	UserAddOutlined,
 } from "@ant-design/icons";
 
@@ -72,7 +74,29 @@ const TopNav = () => {
 					</Item>
 				</>
 			)}
-
+			{user && user.role?.includes("Instructor") ? (
+				<Item
+					key="/inctructor/course/create"
+					icon={<CarryOutOutlined />}
+					onClick={(e) => setCurrentPage(e.key as string)}
+				>
+					<Link href="/inctructor/course/create">
+						<a>Create Course</a>
+					</Link>
+				</Item>
+			) : (
+				user && (
+					<Item
+						key="/user/become-instructor"
+						icon={<TeamOutlined />}
+						onClick={(e) => setCurrentPage(e.key as string)}
+					>
+						<Link href="/become-instructor">
+							<a>Become Instructor</a>
+						</Link>
+					</Item>
+				)
+			)}
 			{user && (
 				<SubMenu icon={<CoffeeOutlined />} title={user ? user.name : null} className="float-right">
 					<ItemGroup>

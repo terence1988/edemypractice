@@ -193,5 +193,8 @@ export const resetPassword = async (req: Request, res: Response) => {
 			{ password: newHashedPassword, passwordResetCode: "" }
 		).exec();
 		return res.json({ ok: true });
-	} catch (err) {}
+	} catch (err) {
+		console.error(err);
+		return res.status(400).json("Please try again");
+	}
 };

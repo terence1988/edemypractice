@@ -37,7 +37,8 @@ const Login = () => {
 			//redirect
 			toast.success("Login successfully");
 			setIsLoading(false);
-			//setTimeout(() => router.push("/user"), 10000);
+			setTimeout(() => toast.success("You will be redirected to the dashboard, please wait"), 5000);
+			setTimeout(() => router.push("/user"), 10000);
 		} catch (err) {
 			toast.error(err.response.result);
 			setIsLoading(false);

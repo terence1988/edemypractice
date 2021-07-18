@@ -51,11 +51,21 @@ const UserProvider: FC = ({ children }) => {
 	//const memoizedUser = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
 	const router = useRouter();
+	//check if logged in
 	useEffect(() => {
 		dispatch({
 			type: UserActionsType.LOGIN,
 			payload: JSON.parse(window.localStorage.getItem("x-next-user")),
 		});
+	}, []);
+	//auth csrf token
+	useEffect(() => {
+		const getCsrfToken = async () => {
+			const { data } = await axios.get("/api/csrfToken");
+			console.log("CSRF", data);
+			axios.defaults.headers["X-CSRF-Token"] = data.csrfToken;
+		};
+		getCsrfToken();
 	}, []);
 
 	axios.interceptors.response.use(

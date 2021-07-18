@@ -23,7 +23,7 @@ const ForgotPassword = () => {
 	//redirect user if logged in
 	useEffect(() => {
 		if (user !== null) router.push("/");
-	}, []);
+	}, [user]);
 
 	//debounces input
 	const checkPassword = () => {
@@ -49,7 +49,7 @@ const ForgotPassword = () => {
 			setLoading(true);
 			const { data } = await axios.post("/api/forgetPassword", { email });
 			setSuccess(true);
-			toast("Cehck your email for the secret code");
+			toast("Check your email for the secret code");
 			setLoading(false);
 		} catch (err) {
 			setLoading(false);
@@ -61,7 +61,7 @@ const ForgotPassword = () => {
 		e.preventDefault();
 		try {
 			setLoading(true);
-			const { data } = await axios.post("/resetPassword", { email, code, newPassword });
+			const { data } = await axios.post("/api/resetPassword", { email, code, newPassword });
 			setEmail("");
 			setCode("");
 			setNewPassword("");
@@ -80,7 +80,7 @@ const ForgotPassword = () => {
 		<>
 			<h1 className="jumbotron text-center bg-primary square">Forgot Password</h1>
 			<div className="container col-md-4 offset-md-4 pb-5">
-				<form onSubmit={success ? handleSubmit : handleResetPassword}>
+				<form onSubmit={success ? handleResetPassword : handleSubmit}>
 					{success ? (
 						<>
 							<p className="display-5 text-center mb-4">{email}</p>
@@ -90,6 +90,7 @@ const ForgotPassword = () => {
 								value={code}
 								onChange={(e) => setCode(e.currentTarget.value)}
 								placeholder="Enter Code"
+								autoComplete="off"
 								required
 							/>
 							<input
@@ -99,6 +100,7 @@ const ForgotPassword = () => {
 								onChange={(e) => setNewPassword(e.currentTarget.value)}
 								onBlur={debouncedCheck}
 								placeholder="Enter New Password"
+								autoComplete="off"
 								required
 							/>
 							<input
@@ -108,6 +110,7 @@ const ForgotPassword = () => {
 								onChange={(e) => setRetypedNewPassword(e.currentTarget.value)}
 								placeholder="Enter New Password again"
 								onBlur={comparePasswords}
+								autoComplete="off"
 								required
 							/>
 							<button
@@ -125,6 +128,7 @@ const ForgotPassword = () => {
 								value={email}
 								onChange={(e) => setEmail(e.currentTarget.value)}
 								placeholder="Enter Email"
+								autoComplete="off"
 								required
 							/>
 							<br />

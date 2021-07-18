@@ -18,7 +18,7 @@ import csurf from "csurf";
 const app = express();
 
 //configure csrf
-const csurfMiddleware = csurf({ cookie: true });
+const csurfProtection = csurf({ cookie: true });
 
 // db
 mongoose
@@ -36,17 +36,16 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
-app.use(csurfMiddleware);
-//
+app.use(csurfProtection);
+//single route not a miidleware for all routes
+app.get("/api/csrfToken", (req: Request, res: Response) => {
+	res.json({ csrfToken: req.csrfToken() });
+});
 
 app.use(router);
 
 // route
 //readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
-
-router.get("/api/csrfToken", (req: Request, res: Response) => {
-	res.json({ csrfToken: req.csrfToken() });
-});
 
 // port
 const port = process.env.PORT || 8000;
