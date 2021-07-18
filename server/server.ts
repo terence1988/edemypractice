@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 //import { readdirSync } from "fs";
 import mongoose from "mongoose";
@@ -8,11 +8,17 @@ import morgan from "morgan";
 import router from "./routes";
 require("dotenv").config(); //This is scoped as well, use package.json
 
-//cookie ?????
+//cookie is not parsed by default
 import cookieParser from "cookie-parser";
+
+//csrf -- cross-site request forgery
+import csurf from "csurf";
 
 // create express app
 const app = express();
+
+//configure csrf
+const csurfMiddleware = csurf({ cookie: true });
 
 // db
 mongoose
@@ -30,11 +36,17 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
+app.use(csurfMiddleware);
+//
 
 app.use(router);
 
 // route
 //readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
+
+router.get("/api/csrfToken", (req: Request, res: Response) => {
+	res.json({ csrfToken: req.csrfToken() });
+});
 
 // port
 const port = process.env.PORT || 8000;

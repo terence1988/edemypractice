@@ -71,9 +71,9 @@ const UserProvider: FC = ({ children }) => {
 			if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
 				return new Promise((resolve, reject) => {
 					axios
-						.get("api/logout")
+						.get("/api/logout")
 						.then((data) => {
-							console.log("401 => logout");
+							console.log("401 => logout", data);
 							dispatch({ type: UserActionsType.LOGOUT });
 							window.localStorage.removeItem("x-next-user");
 							router.push("/login");

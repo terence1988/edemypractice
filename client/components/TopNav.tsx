@@ -33,9 +33,13 @@ const TopNav = () => {
 	const logout = async () => {
 		dispatch({ type: "LOGOUT" });
 		window.localStorage.removeItem("x-next-user");
-		const { data } = await axios.get("/logout");
+		const { data } = await axios.get("/api/logout");
 		toast(data.messages);
 		router.push("/login");
+	};
+
+	const goDashboard = async () => {
+		router.push("/user");
 	};
 
 	return (
@@ -72,7 +76,7 @@ const TopNav = () => {
 			{user && (
 				<SubMenu icon={<CoffeeOutlined />} title={user ? user.name : null} className="float-right">
 					<ItemGroup>
-						<Item key="/user" icon={<DotChartOutlined />} onClick={logout}>
+						<Item key="/user" icon={<DotChartOutlined />} onClick={goDashboard}>
 							<Link href="/user">
 								<a>Dashboard</a>
 							</Link>

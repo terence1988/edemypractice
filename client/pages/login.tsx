@@ -27,7 +27,7 @@ const Login = () => {
 		try {
 			setIsLoading(true);
 			//.env.local will give ENV to client side via NEXT ssg/ssr
-			const { data } = await axios.post("/login", {
+			const { data } = await axios.post("/api/login", {
 				email,
 				password,
 			});
@@ -39,7 +39,7 @@ const Login = () => {
 			setIsLoading(false);
 			//setTimeout(() => router.push("/user"), 10000);
 		} catch (err) {
-			toast.error(err.response.data);
+			toast.error(err.response.result);
 			setIsLoading(false);
 		}
 	};

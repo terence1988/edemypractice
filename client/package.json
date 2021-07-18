@@ -6,7 +6,8 @@
 	"scripts": {
 		"start": "next dev",
 		"build": "next build",
-		"lint": "next lint"
+		"lint": "next lint",
+		"dev": "NODE_ENV='development' node server.js"
 	},
 	"keywords": [],
 	"author": "",

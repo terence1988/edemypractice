@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
 			// secure: true,  //secure will only allow https
 		});
 		//send user as response body
-		res.json({ ok: true });
+		res.json(user);
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send("Error: Try again");
