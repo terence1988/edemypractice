@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import axios from "axios";
 import { rejects } from "assert/strict";
+import { IUser } from "../types/User";
 
 enum UserActionsType {
 	"LOGIN" = "LOGIN",
@@ -10,7 +11,7 @@ enum UserActionsType {
 }
 
 interface defaultUserContext {
-	user: Object;
+	user: IUser;
 }
 
 interface LoginAction {

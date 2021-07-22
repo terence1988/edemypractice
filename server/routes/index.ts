@@ -13,6 +13,8 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
+import { makeInstructor } from "../controllers/instructor";
+
 import healthCheck from "../controllers/healthCheck";
 
 import { requireSignin } from "../middleware";
@@ -27,6 +29,8 @@ router.get("/api/logout", logout);
 
 router.get("/api/currentUser", requireSignin, currentUser);
 router.get("/api/sendEmails", sendTestEmail);
+
+router.post("/api/makeInstructor", requireSignin, makeInstructor);
 
 router.post("/api/forgetPassword", forgetPassword);
 router.post("/api/resetPassword", resetPassword);

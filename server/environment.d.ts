@@ -10,6 +10,7 @@ declare global {
 			AWS_API_VERSION: string;
 			EMAIL_FROM: string;
 			STRIPE_SECRET: string;
+			STRIPE_REDIRECT_URL: string;
 		}
 	}
 }
