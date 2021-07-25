@@ -68,9 +68,12 @@ const ForgotPassword = () => {
 			setRetypedNewPassword("");
 			toast("You can now login to your new password");
 			setLoading(false);
-			// setTimeout(() => {
-			// 	router.push("/login");
-			// }, 10000);
+			setTimeout(() => {
+				toast("You will be redirected to the log in");
+			}, 8000);
+			setTimeout(() => {
+				router.push("/login");
+			}, 10000);
 		} catch (err) {
 			setLoading(false);
 			toast(err.response.data);

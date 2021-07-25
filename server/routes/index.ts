@@ -1,5 +1,4 @@
 import { Router } from "express";
-
 const router = Router();
 
 // controllers
@@ -13,7 +12,7 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
-import { makeInstructor } from "../controllers/instructor";
+import { makeInstructor, getAccountStatus } from "../controllers/instructor";
 
 import healthCheck from "../controllers/healthCheck";
 
@@ -31,6 +30,7 @@ router.get("/api/currentUser", requireSignin, currentUser);
 router.get("/api/sendEmails", sendTestEmail);
 
 router.post("/api/makeInstructor", requireSignin, makeInstructor);
+router.post("/api/getAccountStatus", requireSignin, getAccountStatus);
 
 router.post("/api/forgetPassword", forgetPassword);
 router.post("/api/resetPassword", resetPassword);

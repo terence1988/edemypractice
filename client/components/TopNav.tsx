@@ -91,7 +91,7 @@ const TopNav = () => {
 						icon={<TeamOutlined />}
 						onClick={(e) => setCurrentPage(e.key as string)}
 					>
-						<Link href="/become-instructor">
+						<Link href="/user/become-instructor">
 							<a>Become Instructor</a>
 						</Link>
 					</Item>

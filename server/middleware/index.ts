@@ -7,3 +7,4 @@ export const requireSignin = expressJWT({
 });
 
 //getToken callback only takes req to proceed
+//as user is encoded, probably needed to get user

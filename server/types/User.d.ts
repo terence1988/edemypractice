@@ -4,7 +4,7 @@ export interface MongoUser {
 	email?: string;
 	password?: string;
 	picture?: string;
-	role: string[] | string;
+	role: string[];
 	stripe_account_id?: string;
 	stripe_seller?: Object;
 	stripeSession?: Object;

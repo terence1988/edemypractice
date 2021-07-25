@@ -5,7 +5,7 @@ import Stripe from "stripe";
 //const strip = require('stripe')(process.env.STRIPE_SECRET,{apiVersion: "2020-08-27"})
 import queryString from "query-string";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET, {
+const stripe = new Stripe(process.env.STRIPE_SECRET!, {
 	apiVersion: "2020-08-27",
 });
 
@@ -36,5 +36,31 @@ export const makeInstructor = async (req: Request, res: Response) => {
 	} catch (err) {
 		console.log(err);
 		res.status(500).send("Internl Error, please try again");
+	}
+};
+
+export const getAccountStatus = async (req: Request, res: Response) => {
+	try {
+		const user = await User.findById((req.user as MongoUser)._id).exec();
+		const account = await stripe.accounts.retrieve(user.stripe_account_id);
+
+		//check charge enabled
+		if (!account.charges_enabled) {
+			return res.status(401).send("Unauthorized");
+		} else {
+			const statusUpdated = await User.findByIdAndUpdate(
+				user._id,
+				{
+					stripe_seller: account,
+
+					// @ts-ignore next line seems a type bug
+					$addToSet: { role: "Instructor" },
+				},
+				{ new: true }
+			).exec();
+			res.json(statusUpdated);
+		}
+	} catch (error) {
+		console.log(error);
 	}
 };
