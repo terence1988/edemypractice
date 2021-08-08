@@ -7,6 +7,7 @@ import axios, { AxiosResponse } from "axios";
 const StripeCallback = () => {
 	const {
 		state: { user },
+		dispatch,
 	} = useContext<{ state: { user: IUser } }>(UserContext);
 	//works
 	// const getCookie = (name: string) => {
@@ -50,8 +51,13 @@ const StripeCallback = () => {
 	useEffect(() => {
 		if (user) {
 			axios.post("/api/getAccountStatus").then((res: AxiosResponse) => {
-				console.log(res);
-				//window.location.href = "/instructor";
+				//console.log(res);
+				dispatch({
+					type: "LOGIN",
+					payload: res.data,
+				});
+				window.localStorage.setItem("x-next-user", JSON.stringify(res.data));
+				window.location.href = "/instructor";
 			});
 		}
 	}, [user]);

@@ -12,7 +12,7 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
-import { makeInstructor, getAccountStatus } from "../controllers/instructor";
+import { makeInstructor, getAccountStatus, currentInstructor } from "../controllers/instructor";
 
 import healthCheck from "../controllers/healthCheck";
 
@@ -31,6 +31,7 @@ router.get("/api/sendEmails", sendTestEmail);
 
 router.post("/api/makeInstructor", requireSignin, makeInstructor);
 router.post("/api/getAccountStatus", requireSignin, getAccountStatus);
+router.get("/api/currentInstructor", requireSignin, currentInstructor);
 
 router.post("/api/forgetPassword", forgetPassword);
 router.post("/api/resetPassword", resetPassword);

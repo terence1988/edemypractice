@@ -57,8 +57,26 @@ export const getAccountStatus = async (req: Request, res: Response) => {
 					$addToSet: { role: "Instructor" },
 				},
 				{ new: true }
-			).exec();
+			)
+				.select("-password")
+				.exec();
 			res.json(statusUpdated);
+		}
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const currentInstructor = async (req: Request, res: Response) => {
+	try {
+		let user = await User.findById((req.user as MongoUser)._id)
+			.select("-password")
+			.exec();
+		if (!user.role.includes("Instructor")) {
+			return res.sendStatus(403);
+			//res.sendStatus(403); //equivalent to res.status(403).send('Forbidden')
+		} else {
+			res.json({ ok: true });
 		}
 	} catch (error) {
 		console.log(error);

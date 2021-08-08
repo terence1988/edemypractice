@@ -8,6 +8,7 @@ import {
 	DotChartOutlined,
 	LoginOutlined,
 	LogoutOutlined,
+	TaobaoSquareFilled,
 	TeamOutlined,
 	UserAddOutlined,
 } from "@ant-design/icons";
@@ -51,7 +52,7 @@ const TopNav = () => {
 					<a>Home</a>
 				</Link>
 			</Item>
-
+			{/* The selected keys activate links provied by antd */}
 			{!user && (
 				<>
 					<Item
@@ -97,6 +98,7 @@ const TopNav = () => {
 					</Item>
 				)
 			)}
+
 			{user && (
 				<SubMenu icon={<CoffeeOutlined />} title={user ? user.name : null} className="float-right">
 					<ItemGroup>
@@ -113,6 +115,19 @@ const TopNav = () => {
 					</ItemGroup>
 				</SubMenu>
 			)}
+
+			{user && user.role?.includes("Instructor") ? (
+				<Item
+					className="float-right"
+					key="/inctructor"
+					icon={<TeamOutlined />}
+					onClick={(e) => setCurrentPage(e.key as string)}
+				>
+					<Link href="/inctructor">
+						<a>Instructor Dashboard</a>
+					</Link>
+				</Item>
+			) : null}
 		</Menu>
 	);
 };
