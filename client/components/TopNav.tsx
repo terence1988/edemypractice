@@ -81,7 +81,7 @@ const TopNav = () => {
 					icon={<CarryOutOutlined />}
 					onClick={(e) => setCurrentPage(e.key as string)}
 				>
-					<Link href="/inctructor/course/create">
+					<Link href="/instructor/course/create">
 						<a>Create Course</a>
 					</Link>
 				</Item>
