@@ -26,7 +26,8 @@ const CreateCourse = () => {
 	});
 
 	const [preview, setPreview] = useState("");
-	const [uploadText, setUploadText] = useState("");
+	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
+	const [image, setImage] = useState<any>({});
 
 	const handleOnChange: ChangeEventHandler<any> = (
 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,7 +39,7 @@ const CreateCourse = () => {
 	const handleImage: ChangeEventHandler<any> = (e: SyntheticEvent) => {
 		let file = (e.currentTarget as HTMLInputElement).files[0];
 		setPreview(window.URL.createObjectURL(file));
-		setUploadText(file.name);
+		setUploadButtonText(file.name);
 		setCourseMetaData({ ...courseMetaData, loading: true });
 
 		//resize image and store url in database
@@ -47,8 +48,10 @@ const CreateCourse = () => {
 				let { data } = await axios.post("api/corse/upload-image", {
 					image: uri,
 				});
-				console.log(data);
+				console.log("Image Uploadeds", data);
+				//Needs set image in state
 				setCourseMetaData({ ...courseMetaData, loading: false });
+				//There was error regards payload is too large -- 500KB, body-parser normally handle text
 			} catch (err) {
 				console.log(err);
 				setCourseMetaData({ ...courseMetaData, loading: false });
@@ -69,6 +72,7 @@ const CreateCourse = () => {
 		courseMetaData,
 		setCourseMetaData,
 		preview,
+		uploadButtonText,
 	};
 
 	return (
@@ -77,7 +81,9 @@ const CreateCourse = () => {
 			<div className="pt-3 pb-3">
 				<CourseCreateForm {...formProps} />
 			</div>
-			<pre>{JSON.stringify(courseMetaData)}</pre>
+			<pre>{JSON.stringify(courseMetaData, null, 4)}</pre>
+			<br />
+			<pre>{JSON.stringify(image, null, 4)}</pre>
 		</InstructorRoute>
 	);
 };

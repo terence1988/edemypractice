@@ -11,6 +11,7 @@ const CourseCreateForm = ({
 	courseMetaData,
 	setCourseMetaData,
 	preview,
+	uploadButtonText,
 }: {
 	handleSubmit: FormEventHandler<any>;
 	handleOnChange: ChangeEventHandler<any>;
@@ -18,6 +19,7 @@ const CourseCreateForm = ({
 	courseMetaData: CourseMetaData;
 	setCourseMetaData: Function;
 	preview: string;
+	uploadButtonText:string
 }) => {
 	const children = [];
 	for (let i = 9.99; i <= 100; i += 10) {
@@ -95,7 +97,7 @@ const CourseCreateForm = ({
 				<div className="col">
 					<div className="form-group">
 						<label className="btn btn-outline-secondary btn-block text-left">
-							{courseMetaData.loading ? "Uploading" : "Image Upload"}
+							{uploadButtonText}
 							<input type="file" name="image" onChange={handleImage} accept="image/*" hidden />
 						</label>
 					</div>

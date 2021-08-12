@@ -12,6 +12,8 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
+import { uploadImage } from "../controllers/course";
+
 import { makeInstructor, getAccountStatus, currentInstructor } from "../controllers/instructor";
 
 import healthCheck from "../controllers/healthCheck";
@@ -32,6 +34,9 @@ router.get("/api/sendEmails", sendTestEmail);
 router.post("/api/makeInstructor", requireSignin, makeInstructor);
 router.post("/api/getAccountStatus", requireSignin, getAccountStatus);
 router.get("/api/currentInstructor", requireSignin, currentInstructor);
+
+//courses
+router.post("/api/course/upload-image", uploadImage);
 
 router.post("/api/forgetPassword", forgetPassword);
 router.post("/api/resetPassword", resetPassword);
