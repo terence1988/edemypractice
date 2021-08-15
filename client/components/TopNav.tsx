@@ -119,11 +119,11 @@ const TopNav = () => {
 			{user && user.role?.includes("Instructor") ? (
 				<Item
 					className="float-right"
-					key="/inctructor"
+					key="/instructor"
 					icon={<TeamOutlined />}
 					onClick={(e) => setCurrentPage(e.key as string)}
 				>
-					<Link href="/inctructor">
+					<Link href="/instructor">
 						<a>Instructor Dashboard</a>
 					</Link>
 				</Item>

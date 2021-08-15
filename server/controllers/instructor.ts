@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/user";
+import Course from "../models/course";
 import { MongoUser } from "../types/User";
 import Stripe from "stripe";
 //const strip = require('stripe')(process.env.STRIPE_SECRET,{apiVersion: "2020-08-27"})
@@ -80,5 +81,19 @@ export const currentInstructor = async (req: Request, res: Response) => {
 		}
 	} catch (error) {
 		console.log(error);
+	}
+};
+
+export const instructorCourses = async (req: Request, res: Response) => {
+	//find courses based on instructor's id and send all courses to the front end
+	try {
+		const courses = await Course.find({ instructor: (req.user as MongoUser)._id })
+			.sort({
+				createdAt: -1,
+			})
+			.exec();
+		res.json(courses);
+	} catch (err) {
+		console.log(err);
 	}
 };

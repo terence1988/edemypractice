@@ -14,6 +14,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@ant-design/icons": "^4.5.0",
+		"@axe-core/react": "^4.2.2",
 		"antd": "^4.13.1",
 		"axios": "^0.21.1",
 		"bootstrap": "^4.6.0",

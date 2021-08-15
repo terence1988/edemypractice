@@ -64,11 +64,11 @@ const CourseCreateForm = ({
 							size="large"
 							value={courseMetaData.paid}
 							onChange={(v: string) => {
-								setCourseMetaData({ ...courseMetaData, paid: v });
+								setCourseMetaData({ ...courseMetaData, paid: v, price: 0 });
 							}}
 						>
-							<Select.Option value={"paid"}>Paid</Select.Option>
-							<Select.Option value={"free"}>Free</Select.Option>
+							<Option value={"paid"}>Paid</Option>
+							<Option value={"free"}>Free</Option>
 						</Select>
 					</div>
 				</div>

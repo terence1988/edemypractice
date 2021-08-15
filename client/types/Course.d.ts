@@ -7,3 +7,19 @@ export interface CourseMetaData {
 	loading: boolean;
 	category: string;
 }
+
+export interface MongoCourse {
+	_id: string;
+	name: string;
+	price: number;
+	slug: string;
+	paid: string;
+	category: string;
+	image: any;
+	published: boolean;
+	lessons?: any[];
+	instructor: any;
+	createdAt: string;
+	updatedAt: string;
+	__v?: number;
+}

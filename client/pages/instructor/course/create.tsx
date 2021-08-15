@@ -19,7 +19,7 @@ const CreateCourse = () => {
 	const [courseMetaData, setCourseMetaData] = useState<CourseMetaData>({
 		name: "",
 		description: "",
-		price: 9.99,
+		price: 0,
 		uploading: false,
 		paid: "free",
 		loading: false,

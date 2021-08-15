@@ -14,7 +14,12 @@ import {
 
 import { uploadImage, removeImage, createCourse } from "../controllers/course";
 
-import { makeInstructor, getAccountStatus, currentInstructor } from "../controllers/instructor";
+import {
+	makeInstructor,
+	getAccountStatus,
+	currentInstructor,
+	instructorCourses,
+} from "../controllers/instructor";
 
 import healthCheck from "../controllers/healthCheck";
 
@@ -30,10 +35,11 @@ router.get("/api/logout", logout);
 
 router.get("/api/currentUser", requireSignin, currentUser);
 router.get("/api/sendEmails", sendTestEmail);
-
+//instructors
 router.post("/api/makeInstructor", requireSignin, makeInstructor);
 router.post("/api/getAccountStatus", requireSignin, getAccountStatus);
 router.get("/api/currentInstructor", requireSignin, currentInstructor);
+router.get("/api/instructor-courses", requireSignin, instructorCourses);
 
 //courses images and couese
 router.post("/api/course", requireSignin, isInstructor, createCourse);
