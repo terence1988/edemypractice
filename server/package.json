@@ -11,6 +11,9 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
+	"_app_lib_comments": {
+		"helm": "a collection of 14 small middleware functions that set HTTP response headers."
+	},
 	"dependencies": {
 		"aws-sdk": "^2.942.0",
 		"bcrypt": "^5.0.1",
@@ -22,12 +25,14 @@
 		"esm": "^3.2.25",
 		"express": "^4.17.1",
 		"express-jwt": "^6.0.0",
+		"helm": "^0.2.1",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.12.0",
 		"morgan": "^1.10.0",
 		"nanoid": "^3.1.23",
 		"nodemon": "^2.0.7",
 		"query-string": "^7.0.1",
+		"slugify": "^1.6.0",
 		"stripe": "^8.165.0",
 		"ts-node": "^10.0.0",
 		"validator": "^13.6.0"
@@ -45,6 +50,7 @@
 		"@types/mongodb": "^3.6.20",
 		"@types/morgan": "^1.9.2",
 		"@types/nodemon": "^1.19.0",
-		"@types/validator": "^13.1.4"
+		"@types/validator": "^13.1.4",
+		"ts-node-dev": "^1.1.8"
 	}
 }

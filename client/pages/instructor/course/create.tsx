@@ -13,6 +13,7 @@ import InstructorRoute from "../../../components/routes/InstructorRoute";
 import CourseCreateForm from "../../../components/forms/CourseCreateForm";
 import { CourseMetaData } from "../../../types/Course";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const CreateCourse = () => {
 	const [courseMetaData, setCourseMetaData] = useState<CourseMetaData>({
@@ -28,6 +29,9 @@ const CreateCourse = () => {
 	const [preview, setPreview] = useState("");
 	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
 	const [image, setImage] = useState<any>({});
+
+	//router
+	const router = useRouter();
 
 	const handleOnChange: ChangeEventHandler<any> = (
 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,11 +49,12 @@ const CreateCourse = () => {
 		//resize image and store url in database
 		Resizer.imageFileResizer(file, 720, 500, "JPEG", 100, 0, async (uri) => {
 			try {
-				let { data } = await axios.post("api/corse/upload-image", {
+				let { data } = await axios.post("/api/course/upload-image", {
 					image: uri,
 				});
 				console.log("Image Uploadeds", data);
 				//Needs set image in state
+				setImage(data);
 				setCourseMetaData({ ...courseMetaData, loading: false });
 				//There was error regards payload is too large -- 500KB, body-parser normally handle text
 			} catch (err) {
@@ -60,9 +65,32 @@ const CreateCourse = () => {
 		});
 	};
 
-	const handleSubmit: FormEventHandler<any> = (e: FormEvent) => {
+	const removeImage = async () => {
+		try {
+			setCourseMetaData({ ...courseMetaData, loading: true });
+			const res = await axios.post("/api/course/remove-image", { image });
+			setImage({});
+			setPreview("");
+			setUploadButtonText("Upload Image");
+			setCourseMetaData({ ...courseMetaData, loading: false });
+		} catch (err) {
+			console.log(err);
+			setCourseMetaData({ ...courseMetaData, loading: false });
+			toast("Image upload failed. Try later");
+		}
+	};
+
+	const handleSubmit: FormEventHandler<any> = async (e: FormEvent) => {
 		e.preventDefault();
-		console.log(e);
+		try {
+			const { data } = await axios.post("/api/course", {
+				...courseMetaData,
+				image,
+			});
+			console.log(data);
+			toast("Now, you are ready!");
+			router.push("/instructor");
+		} catch (err) {}
 	};
 
 	const formProps = {
@@ -73,6 +101,8 @@ const CreateCourse = () => {
 		setCourseMetaData,
 		preview,
 		uploadButtonText,
+		setImage,
+		removeImage,
 	};
 
 	return (

@@ -22,7 +22,7 @@ const csurfProtection = csurf({ cookie: true });
 
 // db
 mongoose
-	.connect(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}`, {
+	.connect(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/edemy`, {
 		useNewUrlParser: true,
 		useFindAndModify: false,
 		useUnifiedTopology: true,

@@ -1,8 +1,9 @@
-import { Button, Divider, Select } from "antd";
+import { Button, Select, Badge, Avatar } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import { CourseMetaData } from "../../types/Course";
-import { ChangeEventHandler, FormEventHandler } from "react";
-import Avatar from "antd/lib/avatar/avatar";
+import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from "react";
+
+const { Option } = Select;
 
 const CourseCreateForm = ({
 	handleSubmit,
@@ -12,22 +13,24 @@ const CourseCreateForm = ({
 	setCourseMetaData,
 	preview,
 	uploadButtonText,
+	removeImage,
 }: {
 	handleSubmit: FormEventHandler<any>;
 	handleOnChange: ChangeEventHandler<any>;
 	handleImage: ChangeEventHandler<any>;
 	courseMetaData: CourseMetaData;
 	setCourseMetaData: Function;
+	removeImage: MouseEventHandler<any>;
 	preview: string;
-	uploadButtonText:string
+	uploadButtonText: string;
 }) => {
 	const children = [];
 	for (let i = 9.99; i <= 100; i += 10) {
 		//9.99 += 80 > 99.99
 		children.push(
-			<Select.Option key={i.toFixed(2)} value={courseMetaData.price}>
+			<Option key={i.toFixed(2)} value={Number(i.toFixed(2))}>
 				${i.toFixed(2)}
-			</Select.Option>
+			</Option>
 		);
 	}
 
@@ -73,10 +76,13 @@ const CourseCreateForm = ({
 					<div className="form-group">
 						<Select
 							defaultValue={9.99}
+							value={courseMetaData.price}
 							style={{ width: "100%" }}
-							onChange={(v) => setCourseMetaData({ ...courseMetaData, price: v })}
 							tokenSeparators={[,]}
 							size="large"
+							onChange={(v: number) => {
+								setCourseMetaData({ ...courseMetaData, price: v });
+							}}
 						>
 							{children}
 						</Select>
@@ -101,20 +107,27 @@ const CourseCreateForm = ({
 							<input type="file" name="image" onChange={handleImage} accept="image/*" hidden />
 						</label>
 					</div>
-					{preview && <Avatar style={{ width: "200" }} src={preview} />}
-					{//preview is on src so it must only took local filepath instead of online one}
-					<div className="row">
-						<div className="col">
-							<Button
-								onClick={handleSubmit}
-								disabled={courseMetaData.loading || courseMetaData.uploading}
-								className="btn btn-primary"
-								icon={<SaveOutlined />}
-							>
-								{courseMetaData.loading ? "Saving..." : "Save & Continue"}
-							</Button>
-						</div>
+				</div>
+				{preview && (
+					<div onClick={removeImage}>
+						<Badge count="X" style={{ cursor: "pointer" }}>
+							<Avatar style={{ width: "200" }} src={preview} />
+						</Badge>
 					</div>
+				)}
+				{/*preview is on src so it must only took local filepath instead of online one*/}
+			</div>
+
+			<div className="row">
+				<div className="col">
+					<Button
+						onClick={handleSubmit}
+						disabled={courseMetaData.loading || courseMetaData.uploading}
+						className="btn btn-primary"
+						icon={<SaveOutlined />}
+					>
+						{courseMetaData.loading ? "Saving..." : "Save & Continue"}
+					</Button>
 				</div>
 			</div>
 		</form>

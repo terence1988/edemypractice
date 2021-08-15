@@ -12,13 +12,13 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
-import { uploadImage } from "../controllers/course";
+import { uploadImage, removeImage, createCourse } from "../controllers/course";
 
 import { makeInstructor, getAccountStatus, currentInstructor } from "../controllers/instructor";
 
 import healthCheck from "../controllers/healthCheck";
 
-import { requireSignin } from "../middleware";
+import { requireSignin, isInstructor } from "../middleware";
 
 router.get("/api/healthCheck", healthCheck);
 
@@ -35,8 +35,11 @@ router.post("/api/makeInstructor", requireSignin, makeInstructor);
 router.post("/api/getAccountStatus", requireSignin, getAccountStatus);
 router.get("/api/currentInstructor", requireSignin, currentInstructor);
 
-//courses
+//courses images and couese
+router.post("/api/course", requireSignin, isInstructor, createCourse);
+
 router.post("/api/course/upload-image", uploadImage);
+router.post("/api/course/remove-image", removeImage);
 
 router.post("/api/forgetPassword", forgetPassword);
 router.post("/api/resetPassword", resetPassword);
