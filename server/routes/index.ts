@@ -12,7 +12,7 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
-import { uploadImage, removeImage, createCourse } from "../controllers/course";
+import { uploadImage, removeImage, createCourse, getCourseBySlug } from "../controllers/course";
 
 import {
 	makeInstructor,
@@ -42,6 +42,7 @@ router.get("/api/currentInstructor", requireSignin, currentInstructor);
 router.get("/api/instructor-courses", requireSignin, instructorCourses);
 
 //courses images and couese
+router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
 
 router.post("/api/course/upload-image", uploadImage);

@@ -54,7 +54,7 @@ const CurrentInstructor = () => {
 								<div className="media-body pl-2">
 									<div className="row">
 										<div className="col" style={{ cursor: "pointer" }}>
-											<Link href={`/instructor/course/view/${course._id}`}>
+											<Link href={`/instructor/course/view/${course.slug}`}>
 												<a className="h5 mt-2">
 													<h5 className="pt-2">{course.name}</h5>
 												</a>

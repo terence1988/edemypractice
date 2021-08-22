@@ -82,8 +82,6 @@ export const logout = async (req: Request, res: Response) => {
 
 export const currentUser = async (req: Request, res: Response) => {
 	try {
-		console.log(req.cookies);
-		console.log(req.user);
 		const user = await User.findById((req.user as MongoUser)._id)
 			.select("-password")
 			.exec();

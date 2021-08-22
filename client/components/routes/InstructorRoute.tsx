@@ -3,7 +3,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { SyncOutlined } from "@ant-design/icons";
 
-import UserNav from "../nav/UserNav";
 import InstructorNav from "../nav/InstructorNav";
 
 //// file under the folder can make index.tsx directly available to the client
@@ -14,6 +13,7 @@ const InstructorRoute = ({ children }) => {
 		const fetchUser = async () => {
 			try {
 				const { data } = await axios.get("/api/currentInstructor", { withCredentials: true });
+				console.log(data);
 				if (data.ok) setShowPage(true);
 			} catch (err) {
 				console.log(err);

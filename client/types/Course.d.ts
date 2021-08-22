@@ -14,6 +14,7 @@ export interface MongoCourse {
 	price: number;
 	slug: string;
 	paid: string;
+	description: string;
 	category: string;
 	image: any;
 	published: boolean;

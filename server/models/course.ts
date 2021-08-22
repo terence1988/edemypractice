@@ -53,9 +53,9 @@ const courseSchema = new Schema(
 			default: 9.99,
 		},
 		image: {},
-		category: String,
+		category: { type: String },
 		published: { type: Boolean, default: false },
-		paid: String,
+		paid: { type: String },
 		instructor: {
 			type: ObjectId,
 			ref: "User",
