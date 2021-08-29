@@ -11,12 +11,12 @@ import axios from "axios";
 import Resizer from "react-image-file-resizer";
 import InstructorRoute from "../../../components/routes/InstructorRoute";
 import CourseCreateForm from "../../../components/forms/CourseCreateForm";
-import { CourseMetaData } from "../../../types/Course";
+import { ICourseMetaData } from "../../../types/Course";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
 const CreateCourse = () => {
-	const [courseMetaData, setCourseMetaData] = useState<CourseMetaData>({
+	const [courseMetaData, setCourseMetaData] = useState<ICourseMetaData>({
 		name: "",
 		description: "",
 		price: 0,

@@ -54,6 +54,8 @@ const UserProvider: FC = ({ children }) => {
 	const router = useRouter();
 	//check if logged in
 	useEffect(() => {
+		//when browser is closed, the window.localStorage get cleared!!!
+		if (window.localStorage.getItem("x-next-user")) return;
 		dispatch({
 			type: UserActionsType.LOGIN,
 			payload: JSON.parse(window.localStorage.getItem("x-next-user")),

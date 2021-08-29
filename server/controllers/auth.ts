@@ -59,7 +59,10 @@ export const login = async (req: Request, res: Response) => {
 		user.password = "";
 		//send token in cookie which is part of response header
 		console.log(user);
+		var expiryDate = new Date(Date.now() + 60 * 24 * 3600000);
 		res.cookie("token", token, {
+			expires: expiryDate,
+			maxAge: 14 * 60 * 60 * 1000,
 			httpOnly: true,
 			// secure: true,  //secure will only allow https
 		});

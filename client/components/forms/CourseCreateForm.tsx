@@ -1,6 +1,6 @@
 import { Button, Select, Badge, Avatar } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
-import { CourseMetaData } from "../../types/Course";
+import { ICourseMetaData } from "../../types/Course";
 import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from "react";
 
 const { Option } = Select;
@@ -18,7 +18,7 @@ const CourseCreateForm = ({
 	handleSubmit: FormEventHandler<any>;
 	handleOnChange: ChangeEventHandler<any>;
 	handleImage: ChangeEventHandler<any>;
-	courseMetaData: CourseMetaData;
+	courseMetaData: ICourseMetaData;
 	setCourseMetaData: Function;
 	removeImage: MouseEventHandler<any>;
 	preview: string;

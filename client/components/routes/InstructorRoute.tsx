@@ -44,4 +44,5 @@ const InstructorRoute = ({ children }) => {
 
 export default InstructorRoute;
 
-//moved to be used as wapper conponemt
+//this route always require new login
+//Something is not right

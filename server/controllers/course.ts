@@ -4,6 +4,7 @@ import crypto from "crypto"; //node crypto
 import { nanoid } from "nanoid";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 import slugify from "slugify";
+import { readFileSync } from "fs";
 
 import Course from "../models/course";
 import { MongoCourse } from "../types/Course";
@@ -113,5 +114,35 @@ export const getCourseBySlug = async (req: Request, res: Response) => {
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send("Course Creat error, try again");
+	}
+};
+
+export const uploadVideo = async (req: Request, res: Response) => {
+	//req.body.image
+	//req.files was provided by formible() parser
+	try {
+		const { video } = req.files as any;
+		//console.log(video);
+		if (!video) return res.status(400).send("No video");
+		// after upload, file is in /tmp
+		const params: PutObjectRequest = {
+			Bucket: "tedemy-bucket",
+			Key: `${nanoid()}.${video.type.split("/")[1]}`, // nanoid.jpeg Key -> filename in S3
+			Body: readFileSync(video.path),
+			ACL: "public-read",
+			ContentType: `${video.type}`, //video/mp4
+		};
+		//upload to s3
+		s3.upload(params, (err: Error, data: S3.ManagedUpload.SendData) => {
+			if (err) {
+				return res.sendStatus(400);
+			} else {
+				console.log(data);
+				return res.send(data);
+			}
+		});
+	} catch (err) {
+		console.log(err);
+		return res.sendStatus(501);
 	}
 };

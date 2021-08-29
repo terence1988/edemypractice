@@ -4,6 +4,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import morgan from "morgan";
 
+import { FluentClient } from "@fluent-org/logger";
+
 //routes
 import router from "./routes";
 require("dotenv").config(); //This is scoped as well, use package.json
@@ -16,6 +18,15 @@ import csurf from "csurf";
 
 // create express app
 const app = express();
+
+// The 2nd argument can be omitted. Here is a default value for options.
+const logger = new FluentClient("fluentd.test", {
+	socket: {
+		host: "localhost",
+		port: 24224,
+		timeout: 3000, // 3 seconds
+	},
+});
 
 //configure csrf
 const csurfProtection = csurf({ cookie: true });
@@ -44,32 +55,16 @@ app.use(router);
 // route
 //readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
 
-//csrf is behind routes to update next request's code
+//csrf is behind routes to update next request's token
 app.use(csurfProtection);
 app.get("/api/csrfToken", (req: Request, res: Response) => {
+	logger.emit("follow", { from: "userA", to: "userB" });
 	res.json({ csrfToken: req.csrfToken() });
 });
 // port
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
-
-// environment.d.ts
-
-// declare global {
-//   namespace NodeJS {
-//     interface ProcessEnv {
-//       GITHUB_AUTH_TOKEN: string;
-//       NODE_ENV: 'development' | 'production';
-//       PORT?: string;
-//       PWD: string;
-//     }
-//   }
-// }
-
-// // If this file has no import/export statements (i.e. is a script)
-// // convert it into a module by adding an empty export statement. It's better to change it heree
-// export {}
 
 //You'll need to use express-session package.
 // Add following code before the csurf.

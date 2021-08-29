@@ -1,4 +1,5 @@
 import { Router } from "express";
+import formidable from "express-formidable";
 const router = Router();
 
 // controllers
@@ -12,7 +13,13 @@ import {
 	resetPassword,
 } from "../controllers/auth";
 
-import { uploadImage, removeImage, createCourse, getCourseBySlug } from "../controllers/course";
+import {
+	uploadImage,
+	removeImage,
+	createCourse,
+	getCourseBySlug,
+	uploadVideo,
+} from "../controllers/course";
 
 import {
 	makeInstructor,
@@ -44,6 +51,7 @@ router.get("/api/instructor-courses", requireSignin, instructorCourses);
 //courses images and couese
 router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
+router.post("/api/course/video-upload", requireSignin, formidable(), uploadVideo);
 
 router.post("/api/course/upload-image", uploadImage);
 router.post("/api/course/remove-image", removeImage);

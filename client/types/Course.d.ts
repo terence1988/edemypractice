@@ -1,4 +1,4 @@
-export interface CourseMetaData {
+export interface ICourseMetaData {
 	name: string;
 	description: string;
 	price: number;
@@ -8,7 +8,7 @@ export interface CourseMetaData {
 	category: string;
 }
 
-export interface MongoCourse {
+export interface IMongoCourse {
 	_id: string;
 	name: string;
 	price: number;

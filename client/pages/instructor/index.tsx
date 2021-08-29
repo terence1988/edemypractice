@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 
 import InstructorRoute from "../../components/routes/InstructorRoute";
 import { Avatar } from "antd";
-import { MongoCourse } from "../../types/Course";
+import { IMongoCourse } from "../../types/Course";
 import Link from "next/link";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 const CurrentInstructor = () => {
-	const [courses, setCourses] = useState<MongoCourse[]>([]);
+	const [courses, setCourses] = useState<IMongoCourse[]>([]);
 
 	useEffect(() => {
 		fetchCourses();
@@ -21,7 +21,7 @@ const CurrentInstructor = () => {
 
 	const myStyle = { marginTop: "-10px", fontSize: "10px" };
 
-	const courseInfo = (course: MongoCourse) => {
+	const courseInfo = (course: IMongoCourse) => {
 		return course.lessons.length < 5 ? (
 			<p style={myStyle} className="text-info">
 				At lease 5 lessons are required to publish a course
@@ -43,8 +43,8 @@ const CurrentInstructor = () => {
 			{/* {<pre>{JSON.stringify(courses, null, 4)}</pre>} */}
 
 			{courses.length > 0
-				? courses.map((course) => (
-						<>
+				? courses.map((course: IMongoCourse) => (
+						<Fragment key={course._id}>
 							<div className="media pt-2">
 								<Avatar
 									size={80}
@@ -76,7 +76,7 @@ const CurrentInstructor = () => {
 									</div>
 								</div>
 							</div>
-						</>
+						</Fragment>
 				  ))
 				: null}
 		</InstructorRoute>

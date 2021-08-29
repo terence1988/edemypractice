@@ -10,7 +10,9 @@
 		"dev": "NODE_ENV='development' node server.js"
 	},
 	"_app_lib_comments": {
-		"react-markdown": "Looks like a lib for SSG/SSR"
+		"react-markdown": "Looks like a lib for SSG/SSR",
+		"ghost": "local headless CMS",
+		"Other utils": "Stripe, Auth0"
 	},
 	"keywords": [],
 	"author": "",
