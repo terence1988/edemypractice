@@ -55,10 +55,11 @@ const UserProvider: FC = ({ children }) => {
 	//check if logged in
 	useEffect(() => {
 		//when browser is closed, the window.localStorage get cleared!!!
-		if (window.localStorage.getItem("x-next-user")) return;
+		const currentUser = window.localStorage.getItem("x-next-user");
+		if (!currentUser) return;
 		dispatch({
 			type: UserActionsType.LOGIN,
-			payload: JSON.parse(window.localStorage.getItem("x-next-user")),
+			payload: JSON.parse(currentUser),
 		});
 	}, []);
 	//auth csrf token

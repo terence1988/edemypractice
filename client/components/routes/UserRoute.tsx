@@ -12,7 +12,7 @@ const UserRoute = ({ children }) => {
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const { data } = await axios.get("/api/currentUser", { withCredentials: true });
+				const { data } = await axios.get("/api/current-user", { withCredentials: true });
 				if (data.ok) setShowPage(true);
 			} catch (err) {
 				console.log(err);

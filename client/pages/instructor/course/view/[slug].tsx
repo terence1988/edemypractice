@@ -45,11 +45,15 @@ const CourseView = () => {
 			setVideoUploadText(file.name);
 			const videoData = new FormData();
 			videoData.append("video", file, file.name);
-			const { data } = await axios.post("/api/course/video-upload", videoData, {
-				onUploadProgress: (e: ProgressEvent) => {
-					setProgress(Math.round((100 * e.loaded) / e.total));
-				},
-			});
+			const { data } = await axios.post(
+				`/api/course/video-upload/${course.instructor._id}`,
+				videoData,
+				{
+					onUploadProgress: (e: ProgressEvent) => {
+						setProgress(Math.round((100 * e.loaded) / e.total));
+					},
+				}
+			);
 			//once response received
 			console.log(data);
 			setLessonData({ ...lessonData, video: data });
@@ -63,7 +67,11 @@ const CourseView = () => {
 	const handleVideoRemove = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
 		try {
-			const { data } = await axios.post("/api/course/video-remove", lessonData.video);
+			const { data } = await axios.post(
+				`/api/course/video-remove/${course.instructor._id}`,
+				lessonData.video
+			);
+			console.log(data);
 			setLessonData({ ...lessonData, video: null });
 			setVideoUploadText("Upload another video");
 			isLoading(false);

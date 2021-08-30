@@ -19,6 +19,7 @@ import {
 	createCourse,
 	getCourseBySlug,
 	uploadVideo,
+	removeVideo,
 } from "../controllers/course";
 
 import {
@@ -32,6 +33,8 @@ import healthCheck from "../controllers/healthCheck";
 
 import { requireSignin, isInstructor } from "../middleware";
 
+// define routes
+
 router.get("/api/healthCheck", healthCheck);
 
 router.post("/api/register", register);
@@ -40,23 +43,30 @@ router.post("/api/login", login); // 1. check pw, 2. hash pw, 3.save jwt on clie
 
 router.get("/api/logout", logout);
 
-router.get("/api/currentUser", requireSignin, currentUser);
-router.get("/api/sendEmails", sendTestEmail);
+router.get("/api/current-user", requireSignin, currentUser);
+router.get("/api/send-emails", sendTestEmail);
 //instructors
-router.post("/api/makeInstructor", requireSignin, makeInstructor);
-router.post("/api/getAccountStatus", requireSignin, getAccountStatus);
-router.get("/api/currentInstructor", requireSignin, currentInstructor);
+router.post("/api/make-instructor", requireSignin, makeInstructor);
+router.post("/api/get-accountStatus", requireSignin, getAccountStatus);
+router.get("/api/current-instructor", requireSignin, currentInstructor);
 router.get("/api/instructor-courses", requireSignin, instructorCourses);
 
 //courses images and couese
 router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
-router.post("/api/course/video-upload", requireSignin, formidable(), uploadVideo);
+router.post(
+	"/api/course/video-upload/:instructorId",
+	requireSignin,
+	isInstructor,
+	formidable(),
+	uploadVideo
+);
+router.post("/api/course/video-remove/:instructorId", requireSignin, isInstructor, removeVideo);
 
 router.post("/api/course/upload-image", uploadImage);
 router.post("/api/course/remove-image", removeImage);
 
-router.post("/api/forgetPassword", forgetPassword);
-router.post("/api/resetPassword", resetPassword);
+router.post("/api/forget-password", forgetPassword);
+router.post("/api/reset-password", resetPassword);
 
 export default router;

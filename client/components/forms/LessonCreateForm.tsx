@@ -63,7 +63,7 @@ const LessonCreateForm = ({
 						</Tooltip>
 					)}
 				</div>
-
+				{/* Progress is a Web API provided Object(browser API) so it does not show upload to s3 */}
 				{progress > 0 ? (
 					<Progress className="d-flex justify-content-center pt-2" percent={progress} steps={10} />
 				) : null}

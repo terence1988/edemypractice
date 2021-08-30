@@ -16,7 +16,7 @@ const BecomeInstructor = () => {
 	const becomeInstructor = () => {
 		setLoading(true);
 		axios
-			.post("/api/makeInstructor", {})
+			.post("/api/make-instructor", {})
 			.then((res: AxiosResponse) => {
 				console.log(res);
 				window.location.href = res.data;

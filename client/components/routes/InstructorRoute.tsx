@@ -12,7 +12,7 @@ const InstructorRoute = ({ children }) => {
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const { data } = await axios.get("/api/currentInstructor", { withCredentials: true });
+				const { data } = await axios.get("/api/current-instructor", { withCredentials: true });
 				console.log(data);
 				if (data.ok) setShowPage(true);
 			} catch (err) {

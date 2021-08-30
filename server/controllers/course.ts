@@ -9,6 +9,7 @@ import { readFileSync } from "fs";
 import Course from "../models/course";
 import { MongoCourse } from "../types/Course";
 import { MongoUser } from "../types/User";
+import { ILesson } from "../types/Lesson";
 
 const awsConfig = {
 	assessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -120,6 +121,10 @@ export const getCourseBySlug = async (req: Request, res: Response) => {
 export const uploadVideo = async (req: Request, res: Response) => {
 	//req.body.image
 	//req.files was provided by formible() parser
+	//auth -> would like to have current user and isInstructor
+	if ((req.user as MongoUser)._id !== req.params.instructorId) {
+		return res.sendStatus(401);
+	}
 	try {
 		const { video } = req.files as any;
 		//console.log(video);
@@ -134,6 +139,34 @@ export const uploadVideo = async (req: Request, res: Response) => {
 		};
 		//upload to s3
 		s3.upload(params, (err: Error, data: S3.ManagedUpload.SendData) => {
+			if (err) {
+				return res.sendStatus(400);
+			} else {
+				console.log(data);
+				return res.send(data);
+			}
+		});
+	} catch (err) {
+		console.log(err);
+		return res.sendStatus(501);
+	}
+};
+
+export const removeVideo = async (req: Request, res: Response) => {
+	//req.body.video -> file name
+
+	//auth -> would like to have current user and isInstructor
+	try {
+		const video: ILesson["video"] = req.body;
+		console.log(video);
+		if (!video) return res.status(400).send("No video");
+		// after upload, file is in /tmp
+		const params: PutObjectRequest = {
+			Bucket: video.Bucket,
+			Key: video.Key,
+		};
+		//upload to s3
+		s3.deleteObject(params, (err: Error, data: S3.DeleteObjectOutput) => {
 			if (err) {
 				return res.sendStatus(400);
 			} else {
