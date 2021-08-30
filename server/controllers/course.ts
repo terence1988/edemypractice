@@ -156,6 +156,9 @@ export const removeVideo = async (req: Request, res: Response) => {
 	//req.body.video -> file name
 
 	//auth -> would like to have current user and isInstructor
+	if ((req.user as MongoUser)._id !== req.params.instructorId) {
+		return res.sendStatus(401);
+	}
 	try {
 		const video: ILesson["video"] = req.body;
 		console.log(video);

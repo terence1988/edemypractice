@@ -8,7 +8,6 @@ import {
 	DotChartOutlined,
 	LoginOutlined,
 	LogoutOutlined,
-	TaobaoSquareFilled,
 	TeamOutlined,
 	UserAddOutlined,
 } from "@ant-design/icons";

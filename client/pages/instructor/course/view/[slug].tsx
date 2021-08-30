@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import InstructorRoute from "../../../../components/routes/InstructorRoute";
 import Avatar from "antd/lib/avatar/avatar";
 import { IMongoCourse } from "../../../../types/Course";
-import { Button, Tooltip } from "antd";
+import { Button, List, Tooltip } from "antd";
 import { CheckOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
 import Modal from "antd/lib/modal/Modal";
 import LessonCreateForm from "../../../../components/forms/LessonCreateForm";
@@ -18,7 +18,7 @@ const CourseView = () => {
 	const [lessonData, setLessonData] = useState<ILesson>({
 		title: "",
 		content: "",
-		video: "",
+		video: null,
 	});
 	const [progress, setProgress] = useState(0);
 	const [loading, isLoading] = useState(false);
@@ -34,9 +34,9 @@ const CourseView = () => {
 		const { data } = await axios.get(`/api/course/${slug}`);
 		setCourse(data);
 	};
-	const handleAddLesson = (e: FormEvent) => {
+	const handleAddLesson = async (e: FormEvent) => {
 		e.preventDefault();
-		console.log(lessonData);
+		const { data } = await axios.post(`/api/course/lesson/${slug}/${course.instructor._id}`);
 	};
 	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
@@ -64,7 +64,7 @@ const CourseView = () => {
 		}
 	};
 
-	const handleVideoRemove = async (e: ChangeEvent<HTMLInputElement>) => {
+	const handleVideoRemove = async () => {
 		isLoading(true);
 		try {
 			const { data } = await axios.post(
@@ -89,6 +89,7 @@ const CourseView = () => {
 		setVideoUploadText,
 		loading,
 		handleVideo,
+		handleVideoRemove,
 		progress,
 	};
 
@@ -151,6 +152,13 @@ const CourseView = () => {
 							>
 								<LessonCreateForm {...LessonCreateFormProps} />
 							</Modal>
+
+							<div className="row pt-5">
+								<div className="col lesson-list">
+									<h4>{course.lessons.length} Lessons</h4>
+									<List itemLayout="horizontal"></List>
+								</div>
+							</div>
 						</div>
 					</div>
 				)}

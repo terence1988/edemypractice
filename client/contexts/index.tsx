@@ -56,7 +56,10 @@ const UserProvider: FC = ({ children }) => {
 	useEffect(() => {
 		//when browser is closed, the window.localStorage get cleared!!!
 		const currentUser = window.localStorage.getItem("x-next-user");
-		if (!currentUser) return;
+		if (!currentUser)
+			return dispatch({
+				type: UserActionsType.LOGOUT,
+			});
 		dispatch({
 			type: UserActionsType.LOGIN,
 			payload: JSON.parse(currentUser),
@@ -66,7 +69,7 @@ const UserProvider: FC = ({ children }) => {
 	useEffect(() => {
 		const getCsrfToken = async () => {
 			const { data } = await axios.get("/api/csrfToken");
-			console.log("CSRF:", data);
+			console.log("CSRF: ==>", data);
 			axios.defaults.headers.common["X-CSRF-Token"] = data.csrfToken;
 			//axios.defaults.headers["X-CSRF-Token"] = data.csrfToken;
 		};
