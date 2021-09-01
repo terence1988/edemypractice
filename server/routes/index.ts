@@ -17,6 +17,7 @@ import {
 	uploadImage,
 	removeImage,
 	createCourse,
+	updateCourseBySlug,
 	getCourseBySlug,
 	uploadVideo,
 	removeVideo,
@@ -53,8 +54,9 @@ router.get("/api/current-instructor", requireSignin, currentInstructor);
 router.get("/api/instructor-courses", requireSignin, instructorCourses);
 
 //courses images and couese
-router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
+router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
+router.put(`/api/course/:slug`, requireSignin, isInstructor, updateCourseBySlug);
 router.post(`/api/course/lesson/:slug/:instructorId`, requireSignin, isInstructor, addLesson);
 router.post(
 	"/api/course/video-upload/:instructorId",

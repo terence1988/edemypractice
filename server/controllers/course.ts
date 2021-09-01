@@ -114,7 +114,26 @@ export const getCourseBySlug = async (req: Request, res: Response) => {
 		res.json(course);
 	} catch (err) {
 		console.log(err);
-		return res.status(400).send("Course Creat error, try again");
+		return res.status(400).send("Fetch course errors");
+	}
+};
+
+export const updateCourseBySlug = async (req: Request, res: Response) => {
+	const { slug } = req.params;
+	try {
+		const updatedCourse: MongoCourse = await Course.findOne({ slug });
+		if ((req.user as MongoUser)._id.toString() === updatedCourse.instructor.toString()) {
+			return res.status(400).send("Unauthorized to do this");
+		}
+		const updateTheCourse: MongoCourse = await Course.findOneAndUpdate({ slug }, req.body, {
+			new: true,
+		}).exec();
+		//return updated data to FE
+
+		res.json(updateTheCourse);
+	} catch (err) {
+		console.log(err);
+		res.sendStatus(500);
 	}
 };
 
@@ -148,7 +167,7 @@ export const uploadVideo = async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		console.log(err);
-		return res.sendStatus(501);
+		return res.sendStatus(500);
 	}
 };
 
@@ -179,7 +198,7 @@ export const removeVideo = async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		console.log(err);
-		return res.sendStatus(501);
+		return res.sendStatus(500);
 	}
 };
 
@@ -202,6 +221,6 @@ export const addLesson = async (req: Request, res: Response) => {
 		res.json(updatedCourse);
 	} catch (err) {
 		console.log(err);
-		return res.status(501).send("Add lesson failed");
+		return res.status(500).send("Add lesson failed");
 	}
 };

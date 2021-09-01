@@ -94,17 +94,24 @@ const EditCourse = () => {
 	const handleSubmit: FormEventHandler<any> = async (e: FormEvent) => {
 		e.preventDefault();
 		try {
-			const { data } = await axios.post("/api/course", {
-				...courseMetaData,
-				image,
-			});
+			const { data } = await axios.put(
+				`/api/course/${slug}`,
+				{
+					...courseMetaData,
+					image,
+				},
+				{ withCredentials: true }
+			);
 			console.log(data);
-			toast("Now, you are ready!");
-			router.push("/instructor");
-		} catch (err) {}
+			toast("Course updated");
+			setTimeout(() => router.push(`/instructor/course/view/${slug}`), 5000);
+		} catch (err) {
+			console.log(err);
+			toast(err);
+		}
 	};
 
-	const formProps = {
+	const editFormProps = {
 		handleSubmit,
 		handleOnChange,
 		handleImage,
@@ -114,13 +121,14 @@ const EditCourse = () => {
 		uploadButtonText,
 		setImage,
 		removeImage,
+		editPage: true,
 	};
 
 	return (
 		<InstructorRoute>
 			<h1 className="jumbotron text-center square">Edit Course</h1>
 			<div className="pt-3 pb-3">
-				<CourseCreateForm {...formProps} />
+				<CourseCreateForm {...editFormProps} />
 			</div>
 			<pre>{JSON.stringify(courseMetaData, null, 4)}</pre>
 			<br />

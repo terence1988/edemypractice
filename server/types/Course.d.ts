@@ -8,7 +8,7 @@ export interface MongoCourse {
 	image: any;
 	published: boolean;
 	lessons?: any[];
-	instructor: any;
+	instructor: string;
 	createdAt: string;
 	updatedAt: string;
 	__v?: number;
