@@ -18,8 +18,10 @@
 			// Just as an example of what you can
 			//"@services/*": ["src/services/*"],
 			// Or even cooler
-			"@/*": ["./*"]
+			"@components/*": ["components/*"],
+			"@Itypes/*": ["types/*"]
 		}
 	},
-	"exclude": ["node_modules", ".next"]
+	"exclude": ["node_modules", ".next"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

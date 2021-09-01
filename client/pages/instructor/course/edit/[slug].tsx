@@ -8,9 +8,9 @@ import {
 } from "react";
 import axios from "axios";
 import Resizer from "react-image-file-resizer";
-import InstructorRoute from "../../../../components/routes/InstructorRoute";
-import CourseCreateForm from "../../../../components/forms/CourseCreateForm";
-import { ICourseMetaData } from "../../../../types/Course";
+import InstructorRoute from "@components/routes/InstructorRoute";
+import CourseCreateForm from "@components/forms/CourseCreateForm";
+import { ICourseMetaData } from "@Itypes/Course";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
