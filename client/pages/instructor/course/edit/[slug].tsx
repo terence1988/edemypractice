@@ -1,5 +1,6 @@
 import {
 	useState,
+	useEffect,
 	ChangeEvent,
 	FormEvent,
 	FormEventHandler,
@@ -31,6 +32,17 @@ const EditCourse = () => {
 
 	//router
 	const router = useRouter();
+	const slug = router.query.slug || (process.browser && window.location.pathname.split("/").pop());
+
+	//Effects
+	useEffect(() => {
+		fetchCourse();
+	}, [slug]);
+
+	const fetchCourse = async () => {
+		const { data } = await axios.get(`/api/course/${slug}`);
+		setCourseMetaData(data);
+	};
 
 	const handleOnChange: ChangeEventHandler<any> = (
 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -106,7 +118,7 @@ const EditCourse = () => {
 
 	return (
 		<InstructorRoute>
-			<h1 className="jumbotron text-center square">Create Course</h1>
+			<h1 className="jumbotron text-center square">Edit Course</h1>
 			<div className="pt-3 pb-3">
 				<CourseCreateForm {...formProps} />
 			</div>
