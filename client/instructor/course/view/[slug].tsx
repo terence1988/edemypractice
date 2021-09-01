@@ -26,23 +26,33 @@ const CourseView = () => {
 	const [videoUploadText, setVideoUploadText] = useState("Upload Video");
 	const router = useRouter();
 	const { slug } = router.query;
-	useEffect(() => {
-		fetchCourse();
-		console.log(slug);
-	}, [slug]);
 
 	const fetchCourse = async () => {
 		const { data } = await axios.get(`/api/course/${slug}`);
 		setCourse(data);
 	};
+
+	useEffect(() => {
+		fetchCourse();
+	}, [slug]);
+
 	const handleAddLesson = async (e: FormEvent) => {
 		e.preventDefault();
 		try {
 			const { data } = await axios.post(
-				`/api/course/lesson/${slug}/${course.instructor._id}`,
+				`/api/course/lesson/${course.slug}/${course.instructor._id}`,
 				lessonData
 			);
-		} catch (err) {}
+			setLessonData({ title: "", content: "", video: null });
+			toggleOpenModal(false);
+			setVideoUploadText("Upload Video");
+			setCourse(data);
+		} catch (error) {
+			console.log(error);
+			setVideoUploadText("Upload Video");
+			setLessonData({ ...lessonData, title: "", content: "", video: null });
+			toast(error);
+		}
 	};
 	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
@@ -52,7 +62,7 @@ const CourseView = () => {
 			const videoData = new FormData();
 			videoData.append("video", file, file.name);
 			const { data } = await axios.post(
-				`/api/course/video-upload/${course.instructor._id}`,
+				`/api/course/video-upload/${course.slug}/${course.instructor._id}`,
 				videoData,
 				{
 					onUploadProgress: (e: ProgressEvent) => {
@@ -63,9 +73,14 @@ const CourseView = () => {
 			//once response received
 			console.log(data);
 			setLessonData({ ...lessonData, video: data });
+			toast("Video Uploaded");
+			setVideoUploadText("Upload Another Video");
+			setProgress(0);
 			isLoading(false);
 		} catch (err) {
 			toast("Video upload failed", { autoClose: 3000 });
+			setVideoUploadText("Upload Video again");
+			setProgress(0);
 			isLoading(false);
 		}
 	};
@@ -74,7 +89,7 @@ const CourseView = () => {
 		isLoading(true);
 		try {
 			const { data } = await axios.post(
-				`/api/course/video-remove/${course.instructor._id}`,
+				`/api/course/video-remove/${course.slug}/${course.instructor._id}`,
 				lessonData.video
 			);
 			console.log(data);
@@ -83,6 +98,7 @@ const CourseView = () => {
 			isLoading(false);
 		} catch (err) {
 			toast("Video remove failed", { autoClose: 3000 });
+			setVideoUploadText("Upload Video");
 			isLoading(false);
 		}
 	};
@@ -117,7 +133,14 @@ const CourseView = () => {
 								<div className="d-flex col-2">
 									<Tooltip
 										title="Edit"
-										children={<EditOutlined className="h5 pointer text-warning mr-4" />}
+										children={
+											<EditOutlined
+												className="h5 pointer text-warning mr-4"
+												onClick={() => {
+													router.push(`/instructor/course/edit/$`);
+												}}
+											/>
+										}
 									/>
 									<Tooltip
 										title="Publish"
@@ -159,9 +182,10 @@ const CourseView = () => {
 								<LessonCreateForm {...LessonCreateFormProps} />
 							</Modal>
 
-							<div className="row pb-5">
+							<div className="row pt-5">
 								<div className="col lesson-list">
-									<h4>{course && course.lessons && course.lessons.length} Lessons</h4>
+									<h4>{course.lessons.length} Lessons</h4>
+									{/* Undefined from right to left, so as long as the previous value does not error, no error will be seen*/}
 									<List
 										itemLayout="horizontal"
 										dataSource={course && course.lessons}
@@ -169,20 +193,13 @@ const CourseView = () => {
 											return (
 												<Item>
 													<Item.Meta
-														avatar={<Avatar>{index + 1}</Avatar>}
+														avatar={<Avatar> {index + 1} </Avatar>}
 														title={item.title}
 													></Item.Meta>
 												</Item>
 											);
 										}}
 									></List>
-								</div>
-							</div>
-
-							<div className="row pt-5">
-								<div className="col lesson-list">
-									<h4>{course.lessons.length} Lessons</h4>
-									<List itemLayout="horizontal"></List>
 								</div>
 							</div>
 						</div>

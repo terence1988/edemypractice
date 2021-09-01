@@ -2,7 +2,6 @@ import { useReducer, createContext, FC, useEffect } from "react"; /// redux styl
 import { useRouter } from "next/router";
 
 import axios from "axios";
-import { rejects } from "assert/strict";
 import { IUser } from "../types/User";
 
 enum UserActionsType {

@@ -182,3 +182,26 @@ export const removeVideo = async (req: Request, res: Response) => {
 		return res.sendStatus(501);
 	}
 };
+
+export const addLesson = async (req: Request, res: Response) => {
+	const { slug, instructorId } = req.params;
+	const { title, content, video } = req.body;
+
+	if ((req.user as MongoUser)._id !== instructorId) {
+		return res.status(400).send("Unauthorized to do this");
+	}
+	try {
+		const updatedCourse = await Course.findOneAndUpdate(
+			{ slug },
+			// @ts-ignore  // Known to be complained because optional null
+			{ $push: { lessons: { title, content, video, slug: slugify(title) } } },
+			{ new: true }
+		)
+			.populate("instructor", "_id name")
+			.exec();
+		res.json(updatedCourse);
+	} catch (err) {
+		console.log(err);
+		return res.status(501).send("Add lesson failed");
+	}
+};
