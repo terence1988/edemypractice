@@ -42,7 +42,16 @@ const CourseView = () => {
 				`/api/course/lesson/${slug}/${course.instructor._id}`,
 				lessonData
 			);
-		} catch (err) {}
+			setLessonData({ ...lessonData, title: "", content: "", video: null });
+			setCourse(data);
+			setVideoUploadText("Upload Video");
+			toggleOpenModal(false);
+			toast("Lesson Added");
+			setProgress(0);
+		} catch (err) {
+			console.log(err);
+			setProgress(0);
+		}
 	};
 	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
@@ -63,9 +72,12 @@ const CourseView = () => {
 			//once response received
 			console.log(data);
 			setLessonData({ ...lessonData, video: data });
+			setVideoUploadText("Upload Success");
+			setProgress(0);
 			isLoading(false);
 		} catch (err) {
 			toast("Video upload failed", { autoClose: 3000 });
+			setVideoUploadText("Upload failed");
 			isLoading(false);
 		}
 	};
@@ -176,13 +188,6 @@ const CourseView = () => {
 											);
 										}}
 									></List>
-								</div>
-							</div>
-
-							<div className="row pt-5">
-								<div className="col lesson-list">
-									<h4>{course.lessons.length} Lessons</h4>
-									<List itemLayout="horizontal"></List>
 								</div>
 							</div>
 						</div>

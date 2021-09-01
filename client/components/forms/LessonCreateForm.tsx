@@ -45,6 +45,7 @@ const LessonCreateForm = ({
 					className="form-control mt-3"
 					cols={7}
 					rows={7}
+					value={lessonData.content}
 					onChange={(e) => {
 						setLessonData({ ...lessonData, content: e.currentTarget.value });
 					}}
@@ -55,13 +56,13 @@ const LessonCreateForm = ({
 						{videoUploadText}
 						<input type="file" accept="video/*" hidden onChange={handleVideo} />
 					</label>
-					{!loading && lessonData.video.Location && (
+					{!loading && lessonData.video ? (
 						<Tooltip title="remove" className="pt-1 pl-3">
 							<span onClick={handleVideoRemove}>
 								<CloseCircleFilled className="text-danger d-flex justify-content-center pt-4 pointer" />
 							</span>
 						</Tooltip>
-					)}
+					) : null}
 				</div>
 				{/* Progress is a Web API provided Object(browser API) so it does not show upload to s3 */}
 				{progress > 0 ? (
@@ -73,6 +74,7 @@ const LessonCreateForm = ({
 					className="col mt-3"
 					size="large"
 					onClick={handleAddLesson}
+					disabled={!Boolean(lessonData.title) || !Boolean(lessonData.content)}
 					loading={loading}
 				>
 					Save

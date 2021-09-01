@@ -186,7 +186,7 @@ export const removeVideo = async (req: Request, res: Response) => {
 export const addLesson = async (req: Request, res: Response) => {
 	const { slug, instructorId } = req.params;
 	const { title, content, video } = req.body;
-
+	console.log(title);
 	if ((req.user as MongoUser)._id !== instructorId) {
 		return res.status(400).send("Unauthorized to do this");
 	}

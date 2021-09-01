@@ -54,21 +54,16 @@ router.get("/api/instructor-courses", requireSignin, instructorCourses);
 
 //courses images and couese
 router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
-router.post(`/api/course/lesson/:slug/:instructorId`, requireSignin, isInstructor, addLesson);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
+router.post(`/api/course/lesson/:slug/:instructorId`, requireSignin, isInstructor, addLesson);
 router.post(
-	"/api/course/video-upload/:slug/:instructorId",
+	"/api/course/video-upload/:instructorId",
 	requireSignin,
 	isInstructor,
 	formidable(),
 	uploadVideo
 );
-router.post(
-	"/api/course/video-remove/:slug/:instructorId",
-	requireSignin,
-	isInstructor,
-	removeVideo
-);
+router.post("/api/course/video-remove/:instructorId", requireSignin, isInstructor, removeVideo);
 
 router.post("/api/course/upload-image", uploadImage);
 router.post("/api/course/remove-image", removeImage);
