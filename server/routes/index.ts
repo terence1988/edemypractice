@@ -22,6 +22,7 @@ import {
 	uploadVideo,
 	removeVideo,
 	addLesson,
+	removeLesson,
 } from "../controllers/course";
 
 import {
@@ -57,6 +58,7 @@ router.get("/api/instructor-courses", requireSignin, instructorCourses);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
 router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
 router.put(`/api/course/:slug`, requireSignin, isInstructor, updateCourseBySlug);
+router.put(`/api/course/:slug/:lessonId`, requireSignin, isInstructor, removeLesson);
 router.post(`/api/course/lesson/:slug/:instructorId`, requireSignin, isInstructor, addLesson);
 router.post(
 	"/api/course/video-upload/:instructorId",

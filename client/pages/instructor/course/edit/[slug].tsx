@@ -9,14 +9,22 @@ import {
 } from "react";
 import axios from "axios";
 import Resizer from "react-image-file-resizer";
+import { List, Avatar, Modal } from "antd";
+
 import InstructorRoute from "@components/routes/InstructorRoute";
 import CourseCreateForm from "@components/forms/CourseCreateForm";
-import { ICourseMetaData } from "@Itypes/Course";
+import { ICourseMetaData, IMongoCourse } from "@Itypes/Course";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { DeleteOutlined } from "@ant-design/icons";
+import { ILesson, IMongoLesson } from "@Itypes/Lesson";
+
+interface IEditCourseMetaData extends ICourseMetaData {
+	lessons?: IMongoCourse["lessons"];
+}
 
 const EditCourse = () => {
-	const [courseMetaData, setCourseMetaData] = useState<ICourseMetaData>({
+	const [courseMetaData, setCourseMetaData] = useState<IEditCourseMetaData>({
 		name: "",
 		description: "",
 		price: 0,
@@ -24,11 +32,20 @@ const EditCourse = () => {
 		paid: "free",
 		loading: false,
 		category: "",
+		lessons: [],
 	});
 
 	const [preview, setPreview] = useState("");
 	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
 	const [image, setImage] = useState<any>({});
+	const [editLesson, setEditLesson] = useState({
+		modalvisible: false,
+		editLessonId: {},
+	});
+
+	// useEffect(() => {
+	// 	console.log(editLesson); // log state after hook
+	// }, [editLesson]);
 
 	//router
 	const router = useRouter();
@@ -111,6 +128,42 @@ const EditCourse = () => {
 		}
 	};
 
+	const handleDrag = (e: DragEvent, index: number) => {
+		//console.log(index);
+		e.dataTransfer.setData("ItemIndex", index.toString());
+	};
+
+	const handleDrop = async (e: DragEvent, index: number) => {
+		//console.log(index);
+		const movingItemIndex = Number(e.dataTransfer.getData("ItemIndex"));
+		const targetItemIndex = index;
+		let allLessons = [...courseMetaData.lessons];
+		let movingItem = allLessons[movingItemIndex];
+		allLessons.splice(movingItemIndex, 1);
+		allLessons.splice(targetItemIndex, 0, movingItem);
+		setCourseMetaData({ ...courseMetaData, lessons: [...allLessons] });
+		console.log(courseMetaData.lessons);
+		const { data } = await axios.put(`/api/course/${slug}`, {
+			...courseMetaData,
+			image,
+		});
+		//console.log("Course Updated =>", data);
+		toast("Course updated successfully");
+	};
+
+	const handleDeleteLesson = async (index: number) => {
+		const confirmDelete = window.confirm("Do you really need to delete it?");
+		if (!confirmDelete) return;
+
+		let allLessons = [...courseMetaData.lessons];
+		const deleteItemIndex = allLessons.splice(index, 1).pop(); // splice does always return [], so needs pop
+		setCourseMetaData({ ...courseMetaData, lessons: [...allLessons] });
+		const { data } = await axios.put(
+			`/api/course/${slug}/${(deleteItemIndex as IMongoLesson)._id}`,
+			courseMetaData
+		);
+	};
+
 	const editFormProps = {
 		handleSubmit,
 		handleOnChange,
@@ -130,9 +183,61 @@ const EditCourse = () => {
 			<div className="pt-3 pb-3">
 				<CourseCreateForm {...editFormProps} />
 			</div>
-			<pre>{JSON.stringify(courseMetaData, null, 4)}</pre>
-			<br />
-			<pre>{JSON.stringify(image, null, 4)}</pre>
+
+			<div className="row pb-5">
+				<div className="col lesson-list" onDragOver={(e: any) => e.preventDefault()}>
+					<h4>
+						{courseMetaData && courseMetaData.lessons && courseMetaData.lessons.length} Lessons
+					</h4>
+					<List
+						itemLayout="horizontal"
+						dataSource={courseMetaData && courseMetaData.lessons}
+						renderItem={(item: ILesson, index) => {
+							return (
+								<List.Item
+									onClick={() => {
+										setEditLesson({
+											modalvisible: true,
+											editLessonId: item,
+										});
+									}}
+									key={item.title + index}
+									draggable={true}
+									onDragStart={(e: any) => {
+										handleDrag(e, index);
+									}}
+									onDrop={(e: any) => {
+										handleDrop(e, index);
+									}}
+								>
+									<List.Item.Meta
+										avatar={<Avatar>{index + 1}</Avatar>}
+										title={item.title}
+									></List.Item.Meta>
+									<DeleteOutlined
+										onClick={() => {
+											handleDeleteLesson(index);
+										}}
+										className="text-danger float-right"
+									/>
+								</List.Item>
+							);
+						}}
+					></List>
+				</div>
+			</div>
+
+			<Modal
+				title="Update the lesson"
+				centered
+				visible={editLesson.modalvisible}
+				onCancel={() => {
+					setEditLesson({ modalvisible: false, editLessonId: {} });
+				}}
+			>
+				update lesson form
+				<pre>{JSON.stringify(editLesson, null, 4)}</pre>
+			</Modal>
 		</InstructorRoute>
 	);
 };

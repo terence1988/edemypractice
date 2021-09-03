@@ -122,7 +122,7 @@ export const updateCourseBySlug = async (req: Request, res: Response) => {
 	const { slug } = req.params;
 	try {
 		const updatedCourse: MongoCourse = await Course.findOne({ slug });
-		if ((req.user as MongoUser)._id.toString() === updatedCourse.instructor.toString()) {
+		if ((req.user as MongoUser)._id.toString() !== updatedCourse.instructor.toString()) {
 			return res.status(400).send("Unauthorized to do this");
 		}
 		const updateTheCourse: MongoCourse = await Course.findOneAndUpdate({ slug }, req.body, {
@@ -219,6 +219,25 @@ export const addLesson = async (req: Request, res: Response) => {
 			.populate("instructor", "_id name")
 			.exec();
 		res.json(updatedCourse);
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send("Add lesson failed");
+	}
+};
+
+export const removeLesson = async (req: Request, res: Response) => {
+	const { slug, lessonId } = req.params;
+	const updatedCourse: MongoCourse = await Course.findOne({ slug }).exec();
+	if ((req.user as MongoUser)._id.toString() !== updatedCourse.instructor.toString()) {
+		return res.status(400).send("Unauthorized to do this");
+	}
+	try {
+		const updateCourse = await Course.findByIdAndUpdate(
+			updatedCourse._id,
+			// @ts-ignore  // Known to be complained because optional null
+			{ $pull: { lessons: { _id: lessonId } } }
+		).exec();
+		res.json(updateCourse);
 	} catch (err) {
 		console.log(err);
 		return res.status(500).send("Add lesson failed");

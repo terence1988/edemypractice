@@ -21,11 +21,19 @@ import router from "next/router";
 
 const { Item, SubMenu, ItemGroup } = Menu;
 
-const TopNav = () => {
+export async function getStaticProps() {
+	return {
+		props: {
+			SSRuser: {},
+		}, // will be passed to the page component as props
+	};
+}
+
+const TopNav = ({ SSRuser }) => {
 	const [currentPage, setCurrentPage] = useState("");
 
 	const { state, dispatch } = useContext(UserContext);
-	const { user } = state;
+	const { user } = state || SSRuser;
 
 	useEffect(() => {
 		process.browser && setCurrentPage(window.location.pathname);
