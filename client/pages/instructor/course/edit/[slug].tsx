@@ -9,14 +9,17 @@ import {
 } from "react";
 import axios from "axios";
 import Resizer from "react-image-file-resizer";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 import { List, Avatar, Modal } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 import InstructorRoute from "@components/routes/InstructorRoute";
 import CourseCreateForm from "@components/forms/CourseCreateForm";
+import LessonUpdateForm from "@components/forms/LessonUpdateForm";
+
 import { ICourseMetaData, IMongoCourse } from "@Itypes/Course";
-import { toast } from "react-toastify";
-import { useRouter } from "next/router";
-import { DeleteOutlined } from "@ant-design/icons";
+
 import { ILesson, IMongoLesson } from "@Itypes/Lesson";
 
 interface IEditCourseMetaData extends ICourseMetaData {
@@ -34,6 +37,7 @@ const EditCourse = () => {
 		category: "",
 		lessons: [],
 	});
+	const [course, setCourse] = useState<IMongoCourse>();
 
 	const [preview, setPreview] = useState("");
 	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
@@ -42,6 +46,15 @@ const EditCourse = () => {
 		modalvisible: false,
 		editLessonId: {},
 	});
+
+	const [lessonData, setLessonData] = useState<ILesson>({
+		title: "",
+		content: "",
+		video: null,
+	});
+	const [progress, setProgress] = useState(0);
+	const [loading, isLoading] = useState(false);
+	const [videoUploadText, setVideoUploadText] = useState("Upload Video");
 
 	// useEffect(() => {
 	// 	console.log(editLesson); // log state after hook
@@ -151,6 +164,72 @@ const EditCourse = () => {
 		toast("Course updated successfully");
 	};
 
+	const handleAddLesson = async (e: FormEvent) => {
+		e.preventDefault();
+		try {
+			const { data } = await axios.post(
+				`/api/course/lesson/${course.slug}/${course.instructor._id}`,
+				lessonData
+			);
+			setLessonData({ title: "", content: "", video: null });
+			toggleOpenModal(false);
+			setVideoUploadText("Upload Video");
+			setCourse(data);
+		} catch (error) {
+			console.log(error);
+			setVideoUploadText("Upload Video");
+			setLessonData({ ...lessonData, title: "", content: "", video: null });
+			toast(error);
+		}
+	};
+	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
+		isLoading(true);
+		try {
+			const file = e.currentTarget.files[0];
+			setVideoUploadText(file.name);
+			const videoData = new FormData();
+			videoData.append("video", file, file.name);
+			const { data } = await axios.post(
+				`/api/course/video-upload/${course.slug}/${course.instructor._id}`,
+				videoData,
+				{
+					onUploadProgress: (e: ProgressEvent) => {
+						setProgress(Math.round((100 * e.loaded) / e.total));
+					},
+				}
+			);
+			//once response received
+			console.log(data);
+			setLessonData({ ...lessonData, video: data });
+			toast("Video Uploaded");
+			setVideoUploadText("Upload Another Video");
+			setProgress(0);
+			isLoading(false);
+		} catch (err) {
+			toast("Video upload failed", { autoClose: 3000 });
+			setVideoUploadText("Upload Video again");
+			setProgress(0);
+			isLoading(false);
+		}
+	};
+
+	const handleVideoRemove = async () => {
+		isLoading(true);
+		try {
+			const { data } = await axios.post(
+				`/api/course/video-remove/${course.instructor._id}`,
+				lessonData.video
+			);
+			console.log(data);
+			setLessonData({ ...lessonData, video: null });
+			setVideoUploadText("Upload another video");
+			isLoading(false);
+		} catch (err) {
+			toast("Video remove failed", { autoClose: 3000 });
+			isLoading(false);
+		}
+	};
+
 	const handleDeleteLesson = async (index: number) => {
 		const confirmDelete = window.confirm("Do you really need to delete it?");
 		if (!confirmDelete) return;
@@ -164,6 +243,8 @@ const EditCourse = () => {
 		);
 	};
 
+	const handleUpdateLesson = async () => {};
+
 	const editFormProps = {
 		handleSubmit,
 		handleOnChange,
@@ -175,6 +256,18 @@ const EditCourse = () => {
 		setImage,
 		removeImage,
 		editPage: true,
+	};
+
+	const updateLessonProps = {
+		lessonData,
+		loading,
+		setLessonData,
+		handleAddLesson,
+		videoUploadText,
+		handleVideo,
+		progress,
+		handleUpdateLesson,
+		handleVideoRemove,
 	};
 
 	return (
@@ -236,7 +329,7 @@ const EditCourse = () => {
 				}}
 			>
 				update lesson form
-				<pre>{JSON.stringify(editLesson, null, 4)}</pre>
+				<LessonUpdateForm {...updateLessonProps} />
 			</Modal>
 		</InstructorRoute>
 	);

@@ -12,7 +12,8 @@
 	"_app_lib_comments": {
 		"react-markdown": "Looks like a lib for SSG/SSR",
 		"ghost": "local headless CMS",
-		"Other utils": "Stripe, Auth0"
+		"Other utils": "Stripe, Auth0",
+		"Urls diff": "https://www.linkedin.com/post-inspector/inspect/"
 	},
 	"keywords": [],
 	"author": "",

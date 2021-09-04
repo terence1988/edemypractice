@@ -29,11 +29,14 @@ export async function getStaticProps() {
 	};
 }
 
+/* 
+TODO: When server do a cold start, the prerendered view gets bugs
+*/
 const TopNav = ({ SSRuser }) => {
 	const [currentPage, setCurrentPage] = useState("");
 
 	const { state, dispatch } = useContext(UserContext);
-	const { user } = state || SSRuser;
+	const user = SSRuser || state.user;
 
 	useEffect(() => {
 		process.browser && setCurrentPage(window.location.pathname);
