@@ -1,5 +1,5 @@
 import { Button, Progress, Tooltip, Switch } from "antd";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect } from "react";
 import { FormEvent, ChangeEventHandler, FormEventHandler } from "react";
 import { ILesson } from "../../types/Lesson";
 import ReactPlayer from "react-player";
@@ -13,9 +13,9 @@ interface LessonCreateFormProps {
 	setEditLesson: Function;
 	handleAddLesson: FormEventHandler<any>;
 	videoUploadText: string;
-	handleVideo: ChangeEventHandler<HTMLInputElement>;
+	setVideoUploadText: Function;
+	handleUpdateVideo: ChangeEventHandler<HTMLInputElement>;
 	progress: number;
-	handleVideoRemove: MouseEventHandler<HTMLSpanElement>;
 }
 
 const LessonUpdateForm = ({
@@ -24,10 +24,14 @@ const LessonUpdateForm = ({
 	setEditLesson,
 	handleAddLesson,
 	videoUploadText,
-	handleVideo,
+	setVideoUploadText,
+	handleUpdateVideo,
 	progress,
-	handleVideoRemove,
 }: LessonCreateFormProps) => {
+	useEffect(() => {
+		if (editLesson.editLessonId.video)
+			setVideoUploadText(`Change ${editLesson.editLessonId.title}'s video`);
+	}, []);
 	return (
 		<div className="container pt-3">
 			<form onSubmit={handleAddLesson}>
@@ -62,7 +66,7 @@ const LessonUpdateForm = ({
 				<div className="d-flex justify-content-center">
 					<label className="btn btn-dark btn-block text-left mt-3">
 						{videoUploadText}
-						<input type="file" accept="video/*" hidden onChange={handleVideo} />
+						<input type="file" accept="video/*" hidden onChange={handleUpdateVideo} />
 					</label>
 				</div>
 
@@ -82,7 +86,9 @@ const LessonUpdateForm = ({
 				) : null}
 
 				<div className="d-flex justify-content-between">
-					<span className="pt-3 badge">Preview {`${editLesson.editLessonId.free_preview}`}</span>
+					<span className="pt-3 badge">
+						Free Preview? {editLesson.editLessonId.free_preview ? "Yes" : "No"}
+					</span>
 					<Switch
 						className="float-right mt-2"
 						disabled={loading}

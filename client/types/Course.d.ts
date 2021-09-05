@@ -1,3 +1,5 @@
+import { IUser } from "./User";
+
 export interface ICourseMetaData {
 	name: string;
 	description: string;
@@ -19,7 +21,7 @@ export interface IMongoCourse {
 	image: any;
 	published: boolean;
 	lessons?: any[];
-	instructor: any;
+	instructor: IUser;
 	createdAt: string;
 	updatedAt: string;
 	__v?: number;

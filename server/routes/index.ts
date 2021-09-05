@@ -54,7 +54,7 @@ router.post("/api/get-accountStatus", requireSignin, getAccountStatus);
 router.get("/api/current-instructor", requireSignin, currentInstructor);
 router.get("/api/instructor-courses", requireSignin, instructorCourses);
 
-//courses images and couese
+//courses images and course
 router.post("/api/course", requireSignin, isInstructor, createCourse);
 router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
 router.put(`/api/course/:slug`, requireSignin, isInstructor, updateCourseBySlug);

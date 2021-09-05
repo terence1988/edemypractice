@@ -23,30 +23,22 @@ import { ICourseMetaData, IMongoCourse } from "@Itypes/Course";
 import { ILesson, IMongoLesson } from "@Itypes/Lesson";
 
 //https://medium.com/young-developer/react-markdown-code-and-syntax-highlighting-632d2f9b4ada
-
+//https://thetombomb.com/posts/adding-code-snippets-to-static-markdown-in-Next%20js
 interface IEditCourseMetaData extends ICourseMetaData {
+	instructor: IMongoCourse["instructor"];
 	lessons?: IMongoCourse["lessons"];
 }
 
 const EditCourse = () => {
-	const [courseMetaData, setCourseMetaData] = useState<IEditCourseMetaData>({
-		name: "",
-		description: "",
-		price: 0,
-		uploading: false,
-		paid: "free",
-		loading: false,
-		category: "",
-		lessons: [],
-	});
-	const [course, setCourse] = useState<IMongoCourse>();
+	//@ts-ignore
+	const [course, setCourse] = useState<IEditCourseMetaData>({});
 
 	const [preview, setPreview] = useState("");
 	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
 	const [image, setImage] = useState<any>({});
-	const [editLesson, setEditLesson] = useState({
+	const [editLesson, setEditLesson] = useState<{ modalvisible: boolean; editLessonId: ILesson }>({
 		modalvisible: false,
-		editLessonId: {},
+		editLessonId: null,
 	});
 
 	const [lessonData, setLessonData] = useState<ILesson>({
@@ -74,13 +66,13 @@ const EditCourse = () => {
 
 	const fetchCourse = async () => {
 		const { data } = await axios.get(`/api/course/${slug}`);
-		setCourseMetaData(data);
+		setCourse(data);
 	};
 
 	const handleOnChange: ChangeEventHandler<any> = (
 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
-		setCourseMetaData({ ...courseMetaData, [e.currentTarget.name]: e.currentTarget.value });
+		setCourse({ ...course, [e.currentTarget.name]: e.currentTarget.value });
 	};
 
 	//most generic/base type SyntheticEvent
@@ -88,7 +80,7 @@ const EditCourse = () => {
 		let file = (e.currentTarget as HTMLInputElement).files[0];
 		setPreview(window.URL.createObjectURL(file));
 		setUploadButtonText(file.name);
-		setCourseMetaData({ ...courseMetaData, loading: true });
+		setCourse({ ...course, loading: true });
 
 		//resize image and store url in database
 		Resizer.imageFileResizer(file, 720, 500, "JPEG", 100, 0, async (uri) => {
@@ -99,11 +91,11 @@ const EditCourse = () => {
 				console.log("Image Uploadeds", data);
 				//Needs set image in state
 				setImage(data);
-				setCourseMetaData({ ...courseMetaData, loading: false });
+				setCourse({ ...course, loading: false });
 				//There was error regards payload is too large -- 500KB, body-parser normally handle text
 			} catch (err) {
 				console.log(err);
-				setCourseMetaData({ ...courseMetaData, loading: false });
+				setCourse({ ...course, loading: false });
 				toast("Image upload failed. Try later");
 			}
 		});
@@ -111,15 +103,15 @@ const EditCourse = () => {
 
 	const removeImage = async () => {
 		try {
-			setCourseMetaData({ ...courseMetaData, loading: true });
+			setCourse({ ...course, loading: true });
 			const res = await axios.post("/api/course/remove-image", { image });
 			setImage({});
 			setPreview("");
 			setUploadButtonText("Upload Image");
-			setCourseMetaData({ ...courseMetaData, loading: false });
+			setCourse({ ...course, loading: false });
 		} catch (err) {
 			console.log(err);
-			setCourseMetaData({ ...courseMetaData, loading: false });
+			setCourse({ ...course, loading: false });
 			toast("Image upload failed. Try later");
 		}
 	};
@@ -130,7 +122,7 @@ const EditCourse = () => {
 			const { data } = await axios.put(
 				`/api/course/${slug}`,
 				{
-					...courseMetaData,
+					...course,
 					image,
 				},
 				{ withCredentials: true }
@@ -153,14 +145,14 @@ const EditCourse = () => {
 		//console.log(index);
 		const movingItemIndex = Number(e.dataTransfer.getData("ItemIndex"));
 		const targetItemIndex = index;
-		let allLessons = [...courseMetaData.lessons];
+		let allLessons = [...course.lessons];
 		let movingItem = allLessons[movingItemIndex];
 		allLessons.splice(movingItemIndex, 1);
 		allLessons.splice(targetItemIndex, 0, movingItem);
-		setCourseMetaData({ ...courseMetaData, lessons: [...allLessons] });
-		console.log(courseMetaData.lessons);
+		setCourse({ ...course, lessons: [...allLessons] });
+		console.log(course.lessons);
 		const { data } = await axios.put(`/api/course/${slug}`, {
-			...courseMetaData,
+			...course,
 			image,
 		});
 		//console.log("Course Updated =>", data);
@@ -186,15 +178,26 @@ const EditCourse = () => {
 		console.log("Dummy function");
 	};
 
-	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
+	const handleUpdateVideo = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
+		if (editLesson.editLessonId.video && editLesson.editLessonId.video.Location) {
+			try {
+				const res = await axios.post(
+					`/api/course/video-remove/${course.instructor._id}`,
+					editLesson.editLessonId.video
+				);
+				console.log("Removed ===>", res);
+			} catch (err) {
+				console.log(err);
+			}
+		}
 		try {
 			const file = e.currentTarget.files[0];
 			setVideoUploadText(file.name);
 			const videoData = new FormData();
 			videoData.append("video", file, file.name);
 			const { data } = await axios.post(
-				`/api/course/video-upload/${course.slug}/${course.instructor._id}`,
+				`/api/course/video-upload/${course.instructor._id}`,
 				videoData,
 				{
 					onUploadProgress: (e: ProgressEvent) => {
@@ -205,20 +208,48 @@ const EditCourse = () => {
 			//once response received
 			console.log(data);
 			setLessonData({ ...lessonData, video: data });
-			toast("Video Uploaded");
-			setVideoUploadText("Upload Another Video");
+			setVideoUploadText("Upload Success");
 			setProgress(0);
 			isLoading(false);
 		} catch (err) {
 			toast("Video upload failed", { autoClose: 3000 });
-			setVideoUploadText("Upload Video again");
+			setVideoUploadText("Upload failed");
+			isLoading(false);
+		}
+	};
+
+	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
+		isLoading(true);
+		try {
+			const file = e.currentTarget.files[0];
+			setVideoUploadText(file.name);
+			const videoData = new FormData();
+			videoData.append("video", file, file.name);
+			const { data } = await axios.post(
+				`/api/course/video-upload/${course.instructor._id}`,
+				videoData,
+				{
+					onUploadProgress: (e: ProgressEvent) => {
+						setProgress(Math.round((100 * e.loaded) / e.total));
+					},
+				}
+			);
+			//once response received
+			console.log(data);
+			setLessonData({ ...lessonData, video: data });
+			setVideoUploadText("Upload Success");
 			setProgress(0);
+			isLoading(false);
+		} catch (err) {
+			toast("Video upload failed", { autoClose: 3000 });
+			setVideoUploadText("Upload failed");
 			isLoading(false);
 		}
 	};
 
 	const handleVideoRemove = async () => {
 		isLoading(true);
+		console.log(course);
 		try {
 			const { data } = await axios.post(
 				`/api/course/video-remove/${course.instructor._id}`,
@@ -239,13 +270,13 @@ const EditCourse = () => {
 		const confirmDelete = window.confirm("Do you really need to delete it?");
 		if (!confirmDelete) return;
 
-		let allLessons = [...courseMetaData.lessons];
+		let allLessons = [...course.lessons];
 		const deleteItemIndex = allLessons.splice(index, 1).pop(); // splice does always return [], so needs pop
-		setCourseMetaData({ ...courseMetaData, lessons: [...allLessons] });
+		setCourse({ ...course, lessons: [...allLessons] });
 		try {
 			const { data } = await axios.put(
 				`/api/course/${slug}/${(deleteItemIndex as IMongoLesson)._id}`,
-				courseMetaData
+				course
 			);
 		} catch (err) {
 			console.log(err);
@@ -258,8 +289,8 @@ const EditCourse = () => {
 		handleSubmit,
 		handleOnChange,
 		handleImage,
-		courseMetaData,
-		setCourseMetaData,
+		courseMetaData: course,
+		setCourseMetaData: setCourse,
 		preview,
 		uploadButtonText,
 		setImage,
@@ -273,10 +304,10 @@ const EditCourse = () => {
 		setEditLesson,
 		handleAddLesson,
 		videoUploadText,
-		handleVideo,
+		setVideoUploadText,
+		handleUpdateVideo,
 		progress,
 		handleUpdateLesson,
-		handleVideoRemove,
 	};
 
 	return (
@@ -288,12 +319,10 @@ const EditCourse = () => {
 
 			<div className="row pb-5">
 				<div className="col lesson-list" onDragOver={(e: any) => e.preventDefault()}>
-					<h4>
-						{courseMetaData && courseMetaData.lessons && courseMetaData.lessons.length} Lessons
-					</h4>
+					<h4>{course && course.lessons && course.lessons.length} Lessons</h4>
 					<List
 						itemLayout="horizontal"
-						dataSource={courseMetaData && courseMetaData.lessons}
+						dataSource={course && course.lessons}
 						renderItem={(item: ILesson, index) => {
 							return (
 								<List.Item
@@ -335,7 +364,7 @@ const EditCourse = () => {
 				visible={editLesson.modalvisible}
 				footer={null}
 				onCancel={() => {
-					setEditLesson({ modalvisible: false, editLessonId: {} });
+					setEditLesson({ modalvisible: false, editLessonId: null });
 				}}
 			>
 				update lesson form
