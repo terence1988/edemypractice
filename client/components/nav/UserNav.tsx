@@ -10,9 +10,7 @@ const UserNav = () => {
 	return (
 		<div className="nav flex-column nav-pills mt-2">
 			<Link href="/user">
-				<a className={`nav-link ${/user/g.test(window.location.pathname) ? "active" : null}`}>
-					Dashboard
-				</a>
+				<a className={`nav-link ${/user/g.test(currentActive) ? "active" : null}`}>Dashboard</a>
 			</Link>
 		</div>
 	);

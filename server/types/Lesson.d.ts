@@ -1,6 +1,7 @@
 export interface ILesson {
 	title: string;
 	content: string;
+	free_preview: boolean;
 	video: {
 		Location: string;
 		Bucket: string;
@@ -13,6 +14,7 @@ export interface IMongoLesson {
 	_id: string;
 	title: string;
 	content: string;
+	free_preview: boolean;
 	video: {
 		Location: string;
 		Bucket: string;

@@ -58,7 +58,7 @@ app.use(router);
 //csrf is behind routes to update next request's token
 app.use(csurfProtection);
 app.get("/api/csrfToken", (req: Request, res: Response) => {
-	logger.emit("follow", { from: "userA", to: "userB" }); //Working -- Need to know what to log
+	logger.emit("Requester's Browser", req.headers); //Working -- Need to know what to log
 	res.json({ csrfToken: req.csrfToken() });
 });
 // port

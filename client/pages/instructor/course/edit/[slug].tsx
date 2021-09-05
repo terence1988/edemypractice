@@ -22,6 +22,8 @@ import { ICourseMetaData, IMongoCourse } from "@Itypes/Course";
 
 import { ILesson, IMongoLesson } from "@Itypes/Lesson";
 
+//https://medium.com/young-developer/react-markdown-code-and-syntax-highlighting-632d2f9b4ada
+
 interface IEditCourseMetaData extends ICourseMetaData {
 	lessons?: IMongoCourse["lessons"];
 }
@@ -51,6 +53,7 @@ const EditCourse = () => {
 		title: "",
 		content: "",
 		video: null,
+		free_preview: false,
 	});
 	const [progress, setProgress] = useState(0);
 	const [loading, isLoading] = useState(false);
@@ -166,22 +169,23 @@ const EditCourse = () => {
 
 	const handleAddLesson = async (e: FormEvent) => {
 		e.preventDefault();
-		try {
-			const { data } = await axios.post(
-				`/api/course/lesson/${course.slug}/${course.instructor._id}`,
-				lessonData
-			);
-			setLessonData({ title: "", content: "", video: null });
-			toggleOpenModal(false);
-			setVideoUploadText("Upload Video");
-			setCourse(data);
-		} catch (error) {
-			console.log(error);
-			setVideoUploadText("Upload Video");
-			setLessonData({ ...lessonData, title: "", content: "", video: null });
-			toast(error);
-		}
+		// try {
+		// 	const { data } = await axios.post(
+		// 		`/api/course/lesson/${course.slug}/${course.instructor._id}`,
+		// 		lessonData
+		// 	);
+		// 	setLessonData({ title: "", content: "", video: null });
+		// 	setVideoUploadText("Upload Video");
+		// 	setCourse(data);
+		// } catch (error) {
+		// 	console.log(error);
+		// 	setVideoUploadText("Upload Video");
+		// 	setLessonData({ ...lessonData, title: "", content: "", video: null });
+		// 	toast(error);
+		// }
+		console.log("Dummy function");
 	};
+
 	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
 		try {
@@ -230,17 +234,22 @@ const EditCourse = () => {
 		}
 	};
 
-	const handleDeleteLesson = async (index: number) => {
+	const handleDeleteLesson = async (e: SyntheticEvent, index: number) => {
+		e.stopPropagation();
 		const confirmDelete = window.confirm("Do you really need to delete it?");
 		if (!confirmDelete) return;
 
 		let allLessons = [...courseMetaData.lessons];
 		const deleteItemIndex = allLessons.splice(index, 1).pop(); // splice does always return [], so needs pop
 		setCourseMetaData({ ...courseMetaData, lessons: [...allLessons] });
-		const { data } = await axios.put(
-			`/api/course/${slug}/${(deleteItemIndex as IMongoLesson)._id}`,
-			courseMetaData
-		);
+		try {
+			const { data } = await axios.put(
+				`/api/course/${slug}/${(deleteItemIndex as IMongoLesson)._id}`,
+				courseMetaData
+			);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	const handleUpdateLesson = async () => {};
@@ -259,9 +268,9 @@ const EditCourse = () => {
 	};
 
 	const updateLessonProps = {
-		lessonData,
+		editLesson,
 		loading,
-		setLessonData,
+		setEditLesson,
 		handleAddLesson,
 		videoUploadText,
 		handleVideo,
@@ -308,8 +317,8 @@ const EditCourse = () => {
 										title={item.title}
 									></List.Item.Meta>
 									<DeleteOutlined
-										onClick={() => {
-											handleDeleteLesson(index);
+										onClick={(e) => {
+											handleDeleteLesson(e, index);
 										}}
 										className="text-danger float-right"
 									/>
@@ -324,6 +333,7 @@ const EditCourse = () => {
 				title="Update the lesson"
 				centered
 				visible={editLesson.modalvisible}
+				footer={null}
 				onCancel={() => {
 					setEditLesson({ modalvisible: false, editLessonId: {} });
 				}}

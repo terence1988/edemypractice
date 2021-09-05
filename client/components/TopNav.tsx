@@ -21,14 +21,6 @@ import router from "next/router";
 
 const { Item, SubMenu, ItemGroup } = Menu;
 
-export async function getStaticProps() {
-	return {
-		props: {
-			SSRuser: {},
-		}, // will be passed to the page component as props
-	};
-}
-
 /* 
 TODO: When server do a cold start, the prerendered view gets bugs
 */
@@ -36,7 +28,7 @@ const TopNav = ({ SSRuser }) => {
 	const [currentPage, setCurrentPage] = useState("");
 
 	const { state, dispatch } = useContext(UserContext);
-	const user = SSRuser || state.user;
+	let user = SSRuser || state.user;
 
 	useEffect(() => {
 		process.browser && setCurrentPage(window.location.pathname);
@@ -142,4 +134,12 @@ const TopNav = ({ SSRuser }) => {
 	);
 };
 
+// export async function getStaticProps() {
+// 	return {
+// 		props: {
+// 			SSRuser: {},
+// 		}, // will be passed to the page component as props but it's not what I need
+// 	};
+// }
+// It's not really what I needed
 export default TopNav;

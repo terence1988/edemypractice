@@ -55,10 +55,8 @@ const UserProvider: FC = ({ children }) => {
 	useEffect(() => {
 		//when browser is closed, the window.localStorage get cleared!!!
 		const currentUser = window.localStorage.getItem("x-next-user");
-		if (!currentUser)
-			return dispatch({
-				type: UserActionsType.LOGOUT,
-			});
+
+		console.log(currentUser);
 		dispatch({
 			type: UserActionsType.LOGIN,
 			payload: JSON.parse(currentUser),

@@ -13,6 +13,10 @@ import { ILesson } from "../../../../types/Lesson";
 import { toast } from "react-toastify";
 import Item from "antd/lib/list/Item";
 
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { darcula } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import CodeBlock from "@components/CodeBlock";
+
 const CourseView = () => {
 	const [course, setCourse] = useState<IMongoCourse>();
 	const [openModal, toggleOpenModal] = useState(false);
@@ -20,6 +24,7 @@ const CourseView = () => {
 		title: "",
 		content: "",
 		video: null,
+		free_preview: false,
 	});
 	const [progress, setProgress] = useState(0);
 	const [loading, isLoading] = useState(false);
@@ -146,7 +151,7 @@ const CourseView = () => {
 							</div>
 							<hr />
 							<div className="row">
-								<ReactMarkdown className="col" children={course.description} />
+								<ReactMarkdown components={CodeBlock}>{course.description}</ReactMarkdown>
 								{/* description can now in MD format with basic html stylings*/}
 							</div>
 							<br />

@@ -1,15 +1,16 @@
-import { CloseCircleFilled } from "@ant-design/icons";
-import { Button, Progress, Tooltip } from "antd";
+import { Button, Progress, Tooltip, Switch } from "antd";
 import { MouseEventHandler } from "react";
 import { FormEvent, ChangeEventHandler, FormEventHandler } from "react";
 import { ILesson } from "../../types/Lesson";
+import ReactPlayer from "react-player";
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
 
 // Don’t call Hooks inside loops, conditions, or nested functions.
 //As this is a conditional rendered modal, so yes ??, the hooks should not be here
 interface LessonCreateFormProps {
-	lessonData: ILesson;
+	editLesson: { modalvisible: boolean; editLessonId: ILesson };
 	loading: boolean;
-	setLessonData: Function;
+	setEditLesson: Function;
 	handleAddLesson: FormEventHandler<any>;
 	videoUploadText: string;
 	handleVideo: ChangeEventHandler<HTMLInputElement>;
@@ -18,9 +19,9 @@ interface LessonCreateFormProps {
 }
 
 const LessonUpdateForm = ({
-	lessonData,
+	editLesson,
 	loading,
-	setLessonData,
+	setEditLesson,
 	handleAddLesson,
 	videoUploadText,
 	handleVideo,
@@ -34,9 +35,12 @@ const LessonUpdateForm = ({
 					type="text"
 					className="form-control square"
 					onChange={(e: FormEvent<HTMLInputElement>) =>
-						setLessonData({ ...lessonData, title: e.currentTarget.value })
+						setEditLesson({
+							...editLesson,
+							editLessonId: { ...editLesson.editLessonId, title: e.currentTarget.value },
+						})
 					}
-					value={lessonData.title}
+					value={editLesson.editLessonId.title}
 					placeholder="Title"
 					autoFocus
 					/*auto keyboard focus, good for modals */
@@ -46,9 +50,12 @@ const LessonUpdateForm = ({
 					className="form-control mt-3"
 					cols={7}
 					rows={7}
-					value={lessonData.content}
+					value={editLesson.editLessonId.content}
 					onChange={(e) => {
-						setLessonData({ ...lessonData, content: e.currentTarget.value });
+						setEditLesson({
+							...editLesson,
+							editLessonId: { ...editLesson.editLessonId, content: e.currentTarget.value },
+						});
 					}}
 				/>
 
@@ -57,25 +64,48 @@ const LessonUpdateForm = ({
 						{videoUploadText}
 						<input type="file" accept="video/*" hidden onChange={handleVideo} />
 					</label>
-					{!loading && lessonData.video ? (
-						<Tooltip title="remove" className="pt-1 pl-3">
-							<span onClick={handleVideoRemove}>
-								<CloseCircleFilled className="text-danger d-flex justify-content-center pt-4 pointer" />
-							</span>
-						</Tooltip>
-					) : null}
 				</div>
+
+				{!loading && editLesson.editLessonId && editLesson.editLessonId.video && (
+					<div className="pt-2 d-flex justify-content-center">
+						<ReactPlayer
+							url={`${editLesson.editLessonId.video.Location}`}
+							width={`${640}px`}
+							height={`${360}px`}
+							controls
+						/>
+					</div>
+				)}
 				{/* Progress is a Web API provided Object(browser API) so it does not show upload to s3 */}
 				{progress > 0 ? (
 					<Progress className="d-flex justify-content-center pt-2" percent={progress} steps={10} />
 				) : null}
+
+				<div className="d-flex justify-content-between">
+					<span className="pt-3 badge">Preview {`${editLesson.editLessonId.free_preview}`}</span>
+					<Switch
+						className="float-right mt-2"
+						disabled={loading}
+						defaultChecked={editLesson.editLessonId.free_preview}
+						title="Free Preview"
+						onChange={(v) =>
+							setEditLesson({
+								...editLesson,
+								editLessonId: { ...editLesson.editLessonId, free_preview: v },
+							})
+						}
+					/>
+				</div>
+
 				<Button
 					type="primary"
 					shape="round"
 					className="col mt-3"
 					size="large"
 					onClick={handleAddLesson}
-					disabled={!Boolean(lessonData.title) || !Boolean(lessonData.content)}
+					disabled={
+						!Boolean(editLesson.editLessonId.title) || !Boolean(editLesson.editLessonId.content)
+					}
 					loading={loading}
 				>
 					Save
