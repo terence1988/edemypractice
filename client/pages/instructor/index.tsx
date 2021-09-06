@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 
 import InstructorRoute from "../../components/routes/InstructorRoute";
-import { Avatar } from "antd";
+import { Avatar, Tooltip } from "antd";
 import { IMongoCourse } from "../../types/Course";
 import Link from "next/link";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
@@ -64,13 +64,13 @@ const CurrentInstructor = () => {
 										</div>
 										<div className="col-md-3 mt-3 text-center">
 											{course.published ? (
-												<div>
+												<Tooltip title="Published">
 													<CheckCircleOutlined className="h5 pointer text-success" />
-												</div>
+												</Tooltip>
 											) : (
-												<div>
-													<CloseCircleOutlined className="h5 pointer text-warning" />
-												</div>
+												<Tooltip title="Not published">
+													<CloseCircleOutlined className="h5 pointer text-danger" />
+												</Tooltip>
 											)}
 										</div>
 									</div>

@@ -4,13 +4,13 @@ import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 //TODO:What is props here?
 //children must be string in MD but className?
-// interface CodeBlockProps {
-// 	className: string;
-// 	children: string;
-// }
+interface CodeBlockProps {
+	className?: string;
+	children: React.ReactNode | React.ReactNode[];
+}
 
 const CodeBlock = {
-	code({ className, children }: any) {
+	code({ className, children }: CodeBlockProps) {
 		// Removing "language-" because React-Markdown already added "language-"
 		const language = className.replace("language-", "");
 		return language ? (

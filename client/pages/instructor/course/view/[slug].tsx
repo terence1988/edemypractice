@@ -2,20 +2,14 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
-import InstructorRoute from "../../../../components/routes/InstructorRoute";
-import Avatar from "antd/lib/avatar/avatar";
-import { IMongoCourse } from "../../../../types/Course";
-import { Button, List, Tooltip } from "antd";
-import { CheckOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
-import Modal from "antd/lib/modal/Modal";
-import LessonCreateForm from "../../../../components/forms/LessonCreateForm";
-import { ILesson } from "../../../../types/Lesson";
 import { toast } from "react-toastify";
-import Item from "antd/lib/list/Item";
-
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { darcula } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { Button, List, Tooltip, Avatar, Modal, Typography, Switch, Select } from "antd";
+import { CheckOutlined, EditOutlined, QuestionOutlined, UploadOutlined } from "@ant-design/icons";
+import LessonCreateForm from "@components/forms/LessonCreateForm";
+import InstructorRoute from "@components/routes/InstructorRoute";
 import CodeBlock from "@components/CodeBlock";
+import { IMongoCourse } from "@Itypes/Course";
+import { ILesson } from "@Itypes/Lesson";
 
 const CourseView = () => {
 	const [course, setCourse] = useState<IMongoCourse>();
@@ -124,14 +118,20 @@ const CourseView = () => {
 						<Avatar size={80} src={course.image ? course.image.Location : "/course.png"} />
 						<div className="media-body pl-2">
 							<div className="row">
-								<div className="col-10">
+								<div className="col-8">
 									<h5 className="mt-2 text-primary">{course.name}</h5>
 									<p style={{ marginTop: "-1em" }}>
 										{course.lessons && course.lessons.length} Lessons
 									</p>
 									<p style={{ marginTop: "-1rem", fontSize: "0.8rem" }}>{course.category}</p>
 								</div>
-								<div className="d-flex col-2">
+								<div className="d-flex col-4">
+									<div className="mr-4">
+										<Select defaultValue={`${course.published}`}>
+											<Select.Option value="true">Published</Select.Option>
+											<Select.Option value="false">Not Published</Select.Option>
+										</Select>
+									</div>
 									<Tooltip
 										title="Edit"
 										children={
@@ -143,16 +143,25 @@ const CourseView = () => {
 											/>
 										}
 									/>
-									<Tooltip
-										title="Publish"
-										children={<CheckOutlined className="h5 pointer text-warning mr-4" />}
-									/>
+									{course.lessons && course.lessons.length < 5 ? (
+										<Tooltip
+											title="Minimal 5 lessons are required to publish"
+											children={<QuestionOutlined className="h5 pointer text-danger mr-4" />}
+										/>
+									) : (
+										<Tooltip
+											title="Published"
+											children={<CheckOutlined className="h5 pointer text-warning mr-4" />}
+										/>
+									)}
 								</div>
 							</div>
 							<hr />
-							<div className="row">
-								<ReactMarkdown components={CodeBlock}>{course.description}</ReactMarkdown>
-								{/* description can now in MD format with basic html stylings*/}
+							<div className="row justify-content-center">
+								<div>
+									<ReactMarkdown components={CodeBlock}>{course.description}</ReactMarkdown>
+									{/* description can now in MD format with basic html stylings*/}
+								</div>
 							</div>
 							<br />
 							<div className="row">
@@ -191,12 +200,12 @@ const CourseView = () => {
 										dataSource={course && course.lessons}
 										renderItem={(item, index) => {
 											return (
-												<Item>
-													<Item.Meta
+												<List.Item>
+													<List.Item.Meta
 														avatar={<Avatar>{index + 1}</Avatar>}
 														title={item.title}
-													></Item.Meta>
-												</Item>
+													></List.Item.Meta>
+												</List.Item>
 											);
 										}}
 									></List>

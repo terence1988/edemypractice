@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AWSError, S3 } from "aws-sdk";
 import crypto from "crypto"; //node crypto
 import { nanoid } from "nanoid";
-import { PutObjectRequest } from "aws-sdk/clients/s3";
+import { DeleteObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
 import slugify from "slugify";
 import { readFileSync } from "fs";
 
@@ -183,7 +183,7 @@ export const removeVideo = async (req: Request, res: Response) => {
 		console.log(video);
 		if (!video) return res.status(400).send("No video");
 		// after upload, file is in /tmp
-		const params: PutObjectRequest = {
+		const params: DeleteObjectRequest = {
 			Bucket: video.Bucket,
 			Key: video.Key,
 		};
@@ -238,6 +238,37 @@ export const removeLesson = async (req: Request, res: Response) => {
 			{ $pull: { lessons: { _id: lessonId } } }
 		).exec();
 		res.json(updateCourse);
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send("Add lesson failed");
+	}
+};
+
+export const updateLesson = async (req: Request, res: Response) => {
+	//console.log(req.body);
+	const { slug, instructorId } = req.params;
+	const { _id, title, content, video, free_preview } = req.body;
+	const course = await Course.findOne({ slug }).select("instructor").exec();
+	console.log(course);
+	if (course.instructor._id.toString() !== instructorId.toString()) {
+		return res.status(400).send("Unauthorized to do this");
+	}
+
+	try {
+		const updateCourse = await Course.updateOne(
+			{ "lessons._id": _id },
+			{
+				$set: {
+					"lessons.$.title": title,
+					"lessons.$.content": content,
+					"lessons.$.video": video,
+					"lessons.$.free_preview": free_preview,
+				},
+			},
+			{ new: true }
+		).exec();
+
+		return res.json(updateCourse);
 	} catch (err) {
 		console.log(err);
 		return res.status(500).send("Add lesson failed");

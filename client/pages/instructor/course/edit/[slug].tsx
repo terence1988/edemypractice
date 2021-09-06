@@ -25,28 +25,32 @@ import { ILesson, IMongoLesson } from "@Itypes/Lesson";
 //https://medium.com/young-developer/react-markdown-code-and-syntax-highlighting-632d2f9b4ada
 //https://thetombomb.com/posts/adding-code-snippets-to-static-markdown-in-Next%20js
 interface IEditCourseMetaData extends ICourseMetaData {
+	slug: IMongoCourse["slug"];
 	instructor: IMongoCourse["instructor"];
 	lessons?: IMongoCourse["lessons"];
 }
 
 const EditCourse = () => {
 	//@ts-ignore
-	const [course, setCourse] = useState<IEditCourseMetaData>({});
+	const [course, setCourse] = useState<IEditCourseMetaData>({
+		name: "",
+		description: "",
+		price: 0,
+		uploading: false,
+		paid: "",
+		loading: false,
+		category: "",
+		slug: "",
+	});
 
 	const [preview, setPreview] = useState("");
 	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
-	const [image, setImage] = useState<any>({});
+	const [image, setImage] = useState<any>("");
 	const [editLesson, setEditLesson] = useState<{ modalvisible: boolean; editLessonId: ILesson }>({
 		modalvisible: false,
-		editLessonId: null,
+		editLessonId: { title: "", content: "", video: null, free_preview: false },
 	});
 
-	const [lessonData, setLessonData] = useState<ILesson>({
-		title: "",
-		content: "",
-		video: null,
-		free_preview: false,
-	});
 	const [progress, setProgress] = useState(0);
 	const [loading, isLoading] = useState(false);
 	const [videoUploadText, setVideoUploadText] = useState("Upload Video");
@@ -159,40 +163,22 @@ const EditCourse = () => {
 		toast("Course updated successfully");
 	};
 
-	const handleAddLesson = async (e: FormEvent) => {
-		e.preventDefault();
-		// try {
-		// 	const { data } = await axios.post(
-		// 		`/api/course/lesson/${course.slug}/${course.instructor._id}`,
-		// 		lessonData
-		// 	);
-		// 	setLessonData({ title: "", content: "", video: null });
-		// 	setVideoUploadText("Upload Video");
-		// 	setCourse(data);
-		// } catch (error) {
-		// 	console.log(error);
-		// 	setVideoUploadText("Upload Video");
-		// 	setLessonData({ ...lessonData, title: "", content: "", video: null });
-		// 	toast(error);
-		// }
-		console.log("Dummy function");
-	};
-
 	const handleUpdateVideo = async (e: ChangeEvent<HTMLInputElement>) => {
 		isLoading(true);
-		if (editLesson.editLessonId.video && editLesson.editLessonId.video.Location) {
-			try {
+		const file = e.currentTarget.files[0];
+		try {
+			if (editLesson.editLessonId.video && editLesson.editLessonId.video.Location) {
 				const res = await axios.post(
 					`/api/course/video-remove/${course.instructor._id}`,
 					editLesson.editLessonId.video
 				);
 				console.log("Removed ===>", res);
-			} catch (err) {
-				console.log(err);
 			}
-		}
-		try {
-			const file = e.currentTarget.files[0];
+		} catch (err) {
+			toast("Video upload failed", { autoClose: 3000 });
+			setVideoUploadText("Upload failed");
+			isLoading(false);
+		} finally {
 			setVideoUploadText(file.name);
 			const videoData = new FormData();
 			videoData.append("video", file, file.name);
@@ -207,61 +193,88 @@ const EditCourse = () => {
 			);
 			//once response received
 			console.log(data);
-			setLessonData({ ...lessonData, video: data });
+			setEditLesson({ ...editLesson, editLessonId: { ...editLesson.editLessonId, video: data } });
 			setVideoUploadText("Upload Success");
 			setProgress(0);
 			isLoading(false);
-		} catch (err) {
-			toast("Video upload failed", { autoClose: 3000 });
-			setVideoUploadText("Upload failed");
-			isLoading(false);
 		}
+
+		// try {
+		// 	try_statements
+		//   }
+		//   catch (exception_var) {
+		// 	catch_statements
+		//   }
+		//   finally {
+		// 	finally_statements
+		//   }
 	};
 
-	const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
-		isLoading(true);
-		try {
-			const file = e.currentTarget.files[0];
-			setVideoUploadText(file.name);
-			const videoData = new FormData();
-			videoData.append("video", file, file.name);
-			const { data } = await axios.post(
-				`/api/course/video-upload/${course.instructor._id}`,
-				videoData,
-				{
-					onUploadProgress: (e: ProgressEvent) => {
-						setProgress(Math.round((100 * e.loaded) / e.total));
-					},
-				}
-			);
-			//once response received
-			console.log(data);
-			setLessonData({ ...lessonData, video: data });
-			setVideoUploadText("Upload Success");
-			setProgress(0);
-			isLoading(false);
-		} catch (err) {
-			toast("Video upload failed", { autoClose: 3000 });
-			setVideoUploadText("Upload failed");
-			isLoading(false);
-		}
-	};
+	// const handleVideo = async (e: ChangeEvent<HTMLInputElement>) => {
+	// 	isLoading(true);
+	// 	try {
+	// 		const file = e.currentTarget.files[0];
+	// 		setVideoUploadText(file.name);
+	// 		const videoData = new FormData();
+	// 		videoData.append("video", file, file.name);
+	// 		const { data } = await axios.post(
+	// 			`/api/course/video-upload/${course.instructor._id}`,
+	// 			videoData,
+	// 			{
+	// 				onUploadProgress: (e: ProgressEvent) => {
+	// 					setProgress(Math.round((100 * e.loaded) / e.total));
+	// 				},
+	// 			}
+	// 		);
+	// 		//once response received
+	// 		console.log(data);
+	// 		setEditLesson({ ...editLesson, editLessonId: { ...editLesson.editLessonId, video: data } });
+	// 		setVideoUploadText("Upload Success");
+	// 		setProgress(0);
+	// 		isLoading(false);
+	// 	} catch (err) {
+	// 		toast("Video upload failed", { autoClose: 3000 });
+	// 		setVideoUploadText("Upload failed");
+	// 		isLoading(false);
+	// 	}
+	// };
 
-	const handleVideoRemove = async () => {
-		isLoading(true);
-		console.log(course);
+	// const handleVideoRemove = async () => {
+	// 	isLoading(true);
+	// 	console.log(course);
+	// 	try {
+	// 		const { data } = await axios.post(
+	// 			`/api/course/video-remove/${course.instructor._id}`,
+	// 			editLesson.editLessonId.video
+	// 		);
+	// 		console.log(data);
+	// 		setEditLesson({ ...editLesson, editLessonId: { ...editLesson.editLessonId, video: null } });
+	// 		setVideoUploadText("Upload another video");
+	// 		isLoading(false);
+	// 	} catch (err) {
+	// 		toast("Video remove failed", { autoClose: 3000 });
+	// 		isLoading(false);
+	// 	}
+	// };
+
+	const handleAddLesson = async (e: FormEvent) => {
+		e.preventDefault();
 		try {
 			const { data } = await axios.post(
-				`/api/course/video-remove/${course.instructor._id}`,
-				lessonData.video
+				`/api/course/lesson/${course.slug}/${course.instructor._id}`,
+				editLesson.editLessonId
 			);
-			console.log(data);
-			setLessonData({ ...lessonData, video: null });
-			setVideoUploadText("Upload another video");
-			isLoading(false);
-		} catch (err) {
-			toast("Video remove failed", { autoClose: 3000 });
-			isLoading(false);
+			setEditLesson({ ...editLesson, editLessonId: data });
+			setVideoUploadText("Upload Video");
+			setCourse(data);
+		} catch (error) {
+			console.log(error);
+			setVideoUploadText("Upload Video again");
+			setEditLesson({
+				...editLesson,
+				editLessonId: { title: "", content: "", video: null, free_preview: false },
+			});
+			toast(error);
 		}
 	};
 
@@ -283,7 +296,25 @@ const EditCourse = () => {
 		}
 	};
 
-	const handleUpdateLesson = async () => {};
+	const handleUpdateLesson = async (e: SyntheticEvent) => {
+		e.preventDefault();
+		try {
+			await axios.put(
+				`/api/course/lesson/${course.slug}/${course.instructor._id}`,
+				editLesson.editLessonId
+			);
+			setVideoUploadText("Upload Video");
+			setEditLesson({
+				modalvisible: false,
+				editLessonId: { title: "", content: "", video: null, free_preview: false },
+			});
+			toast("Lesson updated");
+			fetchCourse();
+		} catch (error) {
+			console.log(error);
+		}
+		// UI -> BE , BE update, UI <-- BE
+	};
 
 	const editFormProps = {
 		handleSubmit,
@@ -377,3 +408,22 @@ const EditCourse = () => {
 };
 
 export default EditCourse;
+
+// try {
+// 	myroutine(); // may throw three types of exceptions
+//   } catch (e) {
+// 	if (e instanceof TypeError) {
+// 	  // statements to handle TypeError exceptions
+// 	} else if (e instanceof RangeError) {
+// 	  // statements to handle RangeError exceptions
+// 	} else if (e instanceof EvalError) {
+// 	  // statements to handle EvalError exceptions
+// 	} else {
+// 	  // statements to handle any unspecified exceptions
+// 	  logMyErrors(e); // pass exception object to error handler
+// 	}
+//   }
+// A common use case for this is to only catch (and silence) a small subset of
+// expected errors, and then re-throw the error in other cases:
+
+//https://dmitripavlutin.com/controlled-inputs-using-react-hooks/

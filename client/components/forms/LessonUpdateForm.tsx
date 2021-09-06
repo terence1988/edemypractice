@@ -1,6 +1,7 @@
 import { Button, Progress, Tooltip, Switch } from "antd";
 import { MouseEventHandler, useEffect } from "react";
 import { FormEvent, ChangeEventHandler, FormEventHandler } from "react";
+import toast from "react-toastify";
 import { ILesson } from "../../types/Lesson";
 import ReactPlayer from "react-player";
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
@@ -11,7 +12,7 @@ interface LessonCreateFormProps {
 	editLesson: { modalvisible: boolean; editLessonId: ILesson };
 	loading: boolean;
 	setEditLesson: Function;
-	handleAddLesson: FormEventHandler<any>;
+	handleUpdateLesson: FormEventHandler<any>;
 	videoUploadText: string;
 	setVideoUploadText: Function;
 	handleUpdateVideo: ChangeEventHandler<HTMLInputElement>;
@@ -22,7 +23,7 @@ const LessonUpdateForm = ({
 	editLesson,
 	loading,
 	setEditLesson,
-	handleAddLesson,
+	handleUpdateLesson,
 	videoUploadText,
 	setVideoUploadText,
 	handleUpdateVideo,
@@ -34,7 +35,11 @@ const LessonUpdateForm = ({
 	}, []);
 	return (
 		<div className="container pt-3">
-			<form onSubmit={handleAddLesson}>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+				}}
+			>
 				<input
 					type="text"
 					className="form-control square"
@@ -108,7 +113,7 @@ const LessonUpdateForm = ({
 					shape="round"
 					className="col mt-3"
 					size="large"
-					onClick={handleAddLesson}
+					onClick={handleUpdateLesson}
 					disabled={
 						!Boolean(editLesson.editLessonId.title) || !Boolean(editLesson.editLessonId.content)
 					}
