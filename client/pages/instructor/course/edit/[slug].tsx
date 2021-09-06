@@ -310,6 +310,8 @@ const EditCourse = () => {
 		handleUpdateLesson,
 	};
 
+	//JSX is normally on a different context
+
 	return (
 		<InstructorRoute>
 			<h1 className="jumbotron text-center square">Edit Course</h1>

@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }) {
 	return (
 		<UserProvider>
 			<ToastContainer position={"top-center"} />
-			<TopNav SSRuser={undefined} />
+			<TopNav />
 			<Component {...pageProps} />
 		</UserProvider>
 	);

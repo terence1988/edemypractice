@@ -11,7 +11,7 @@ import {
 	TeamOutlined,
 	UserAddOutlined,
 } from "@ant-design/icons";
-
+import { NextPage } from "next";
 import { UserContext } from "../contexts";
 
 //logout request
@@ -24,11 +24,16 @@ const { Item, SubMenu, ItemGroup } = Menu;
 /* 
 TODO: When server do a cold start, the prerendered view gets bugs
 */
-const TopNav = ({ SSRuser }) => {
+
+interface Props {
+	disableSSR: { user: unknown };
+}
+
+const TopNav: NextPage<Props> = ({ disableSSR }) => {
 	const [currentPage, setCurrentPage] = useState("");
 
 	const { state, dispatch } = useContext(UserContext);
-	let user = SSRuser || state.user;
+	const { user } = disableSSR || state;
 
 	useEffect(() => {
 		process.browser && setCurrentPage(window.location.pathname);
@@ -134,12 +139,9 @@ const TopNav = ({ SSRuser }) => {
 	);
 };
 
-// export async function getStaticProps() {
-// 	return {
-// 		props: {
-// 			SSRuser: {},
-// 		}, // will be passed to the page component as props but it's not what I need
-// 	};
-// }
+TopNav.getInitialProps = async (context) => {
+	const disableSSR = { user: {} };
+	return { disableSSR };
+};
 // It's not really what I needed
 export default TopNav;
