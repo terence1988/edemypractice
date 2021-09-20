@@ -295,7 +295,7 @@ const EditCourse = () => {
 			console.log(err);
 		}
 	};
-
+	// There are setxxxAction and Effect types that can be used
 	const handleUpdateLesson = async (e: SyntheticEvent) => {
 		e.preventDefault();
 		try {

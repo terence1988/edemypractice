@@ -15,6 +15,7 @@ import cookieParser from "cookie-parser";
 
 //csrf -- cross-site request forgery
 import csurf from "csurf";
+import helmet from "helmet";
 
 // create express app
 const app = express();
@@ -43,9 +44,11 @@ mongoose
 	.catch((err) => console.log("DB CONNECTION ERR => ", err));
 
 // apply middlewares
+app.use(helmet()) //see how it goes
 app.use(cors());
 app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
+//The default time for a Cookie to expire is 30 minutes.
 
 app.use(morgan("dev"));
 //single route not a miidleware for all routes

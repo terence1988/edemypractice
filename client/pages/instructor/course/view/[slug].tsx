@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent, SyntheticEvent } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -95,6 +95,21 @@ const CourseView = () => {
 		} catch (err) {
 			toast("Video remove failed", { autoClose: 3000 });
 			isLoading(false);
+		}
+	};
+
+	const tooglePublish = async (e: SyntheticEvent, courseId: string) => {
+		try {
+			let answer = window.confirm(
+				`Are you sure to ${course.published ? "un" : null}publish this course?`
+			);
+			if (!answer) return;
+
+			const { data } = await axios.put(`/api/course/publish/${courseId}`);
+			setCourse(data);
+			toast("Congrats!");
+		} catch (err) {
+			toast("Try again later.");
 		}
 	};
 

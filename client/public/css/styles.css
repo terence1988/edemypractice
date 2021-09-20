@@ -10,3 +10,11 @@
 /* * {
 	border: dashed 1px blue;
 } */
+
+.ant-select-selector {
+	background-image: linear-gradient(#99cccc, #99cccc), linear-gradient(#99cccc, #99cccc);
+	background-clip: content-box, padding-box;
+}
+/* 
+http://jsfiddle.net/ilancopelyn/n1ax4qvt/
+*/

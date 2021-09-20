@@ -39,6 +39,11 @@ const TopNav: NextPage<Props> = ({ disableSSR }) => {
 		process.browser && setCurrentPage(window.location.pathname);
 	}, [process.browser && window.location.pathname]);
 	//as Next uses ssg
+	useEffect(() => {
+		console.log(window.localStorage.getItem("x-next-user"));
+		if (process.browser && !window.localStorage.getItem("x-next-user"))
+			dispatch({ type: "LOGOUT" });
+	}, []);
 
 	const logout = async () => {
 		dispatch({ type: "LOGOUT" });
@@ -139,8 +144,9 @@ const TopNav: NextPage<Props> = ({ disableSSR }) => {
 	);
 };
 
-TopNav.getInitialProps = async (context) => {
+export const getInitialProps = async () => {
 	const disableSSR = { user: {} };
+	console.log(disableSSR);
 	return { disableSSR };
 };
 // It's not really what I needed

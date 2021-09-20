@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import router from "next/router";
+import PasswordStrengthBar from "react-password-strength-bar";
 //user context
 import { UserContext } from "../contexts";
 
@@ -63,6 +64,7 @@ const Register = () => {
 						required
 						autoComplete="off"
 					/>
+					<PasswordStrengthBar {...password} />
 					<input
 						type="password"
 						className="form-control mb-4 p-4"

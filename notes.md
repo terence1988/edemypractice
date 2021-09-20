@@ -1,3 +1,11 @@
-0.1 second is about the limit for having the user feel that the system is reacting instantaneously, meaning that no special feedback is necessary except to display the result.
-1.0 second is about the limit for the user's flow of thought to stay uninterrupted, even though the user will notice the delay. Normally, no special feedback is necessary during delays of more than 0.1 but less than 1.0 second, but the user does lose the feeling of operating directly on the data.
-10 seconds is about the limit for keeping the user's attention focused on the dialogue. For longer delays, users will want to perform other tasks while waiting for the computer to finish, so they should be given feedback indicating when the computer expects to be done. Feedback during the delay is especially important if the response time is likely to be highly variable, since users will then not know what to expect.
+### 5 Ws and 2 Hs
+
+### SOLID
+
+The SOLID concepts are
+
+The Single-responsibility principle: "There should never be more than one reason for a class to change."[5] In other words, every class should have only one responsibility.[6]
+The Open–closed principle: "Software entities ... should be open for extension, but closed for modification."[7]
+The Liskov substitution principle: "Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it."[8] See also design by contract.[8]
+The Interface segregation principle: "Many client-specific interfaces are better than one general-purpose interface."[9][4]
+The Dependency inversion principle: "Depend upon abstractions, [not] concretions."[10][4]
