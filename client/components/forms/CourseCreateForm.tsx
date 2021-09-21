@@ -7,6 +7,7 @@ const { Option } = Select;
 
 const CourseCreateForm = ({
 	handleSubmit,
+	handleSubmitEdit,
 	handleOnChange,
 	handleImage,
 	courseMetaData,
@@ -16,7 +17,8 @@ const CourseCreateForm = ({
 	removeImage,
 	editPage = false,
 }: {
-	handleSubmit: FormEventHandler<any>;
+	handleSubmit?: FormEventHandler<any>;
+	handleSubmitEdit?: FormEventHandler<any>;
 	handleOnChange: ChangeEventHandler<any>;
 	handleImage: ChangeEventHandler<any>;
 	courseMetaData: ICourseMetaData;
@@ -36,7 +38,110 @@ const CourseCreateForm = ({
 		);
 	}
 
-	return (
+	return editPage ? (
+		<form onSubmit={handleSubmitEdit} className="form-group">
+			<input
+				type="text"
+				name="name"
+				className="form-control"
+				placeholder="name"
+				value={courseMetaData.name}
+				onChange={handleOnChange}
+			/>
+			<div>
+				<textarea
+					name="description"
+					cols={7}
+					rows={7}
+					className="form-control"
+					placeholder="description"
+					value={courseMetaData.description}
+					onChange={handleOnChange}
+				/>
+			</div>
+			<div className="form-row">
+				<div className="col">
+					<div className="form-group">
+						<Select
+							defaultValue={courseMetaData.paid}
+							style={{ width: "100%" }}
+							size="large"
+							value={courseMetaData.paid}
+							onChange={(v: string) => {
+								setCourseMetaData({ ...courseMetaData, paid: v, price: 0 });
+							}}
+						>
+							<Option value={"paid"}>Paid</Option>
+							<Option value={"free"}>Free</Option>
+						</Select>
+					</div>
+				</div>
+				{courseMetaData.paid === "paid" && (
+					<div className="form-group">
+						<Select
+							defaultValue={9.99}
+							value={courseMetaData.price}
+							style={{ width: "100%" }}
+							tokenSeparators={[,]}
+							size="large"
+							onChange={(v: number) => {
+								setCourseMetaData({ ...courseMetaData, price: v });
+							}}
+						>
+							{children}
+						</Select>
+					</div>
+				)}
+			</div>
+			<div className="form-group">
+				<input
+					type="text"
+					name="category"
+					className="form-control"
+					placeholder="Category"
+					value={courseMetaData.category}
+					onChange={handleOnChange}
+				/>
+			</div>
+			<div className="form-row">
+				<div className="col">
+					<div className="form-group">
+						<label className="btn btn-outline-secondary btn-block text-left">
+							{uploadButtonText}
+							<input
+								type="file"
+								name="image"
+								onChange={handleImage}
+								accept="image/*"
+								hidden
+							/>
+						</label>
+					</div>
+				</div>
+				{preview && (
+					<div onClick={removeImage}>
+						<Badge count="X" style={{ cursor: "pointer" }}>
+							<Avatar style={{ width: "200" }} src={preview} />
+						</Badge>
+					</div>
+				)}
+				{/*preview is on src so it must only took local filepath instead of online one*/}
+			</div>
+
+			<div className="row">
+				<div className="col">
+					<Button
+						onClick={handleSubmitEdit}
+						disabled={courseMetaData.loading || courseMetaData.uploading}
+						className="btn btn-primary"
+						icon={<SaveOutlined />}
+					>
+						{courseMetaData.loading ? "Saving..." : "Save & Continue"}
+					</Button>
+				</div>
+			</div>
+		</form>
+	) : (
 		<form onSubmit={handleSubmit} className="form-group">
 			<input
 				type="text"
@@ -106,7 +211,13 @@ const CourseCreateForm = ({
 					<div className="form-group">
 						<label className="btn btn-outline-secondary btn-block text-left">
 							{uploadButtonText}
-							<input type="file" name="image" onChange={handleImage} accept="image/*" hidden />
+							<input
+								type="file"
+								name="image"
+								onChange={handleImage}
+								accept="image/*"
+								hidden
+							/>
 						</label>
 					</div>
 				</div>

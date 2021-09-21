@@ -1,10 +1,30 @@
-import { useState, useEffect, ChangeEvent, FormEvent, SyntheticEvent } from "react";
+import {
+	useState,
+	useEffect,
+	ChangeEvent,
+	FormEvent,
+	SyntheticEvent,
+} from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { toast } from "react-toastify";
-import { Button, List, Tooltip, Avatar, Modal, Typography, Switch, Select } from "antd";
-import { CheckOutlined, EditOutlined, QuestionOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+	Button,
+	List,
+	Tooltip,
+	Avatar,
+	Modal,
+	Typography,
+	Switch,
+	Select,
+} from "antd";
+import {
+	CheckOutlined,
+	EditOutlined,
+	QuestionOutlined,
+	UploadOutlined,
+} from "@ant-design/icons";
 import LessonCreateForm from "@components/forms/LessonCreateForm";
 import InstructorRoute from "@components/routes/InstructorRoute";
 import CodeBlock from "@components/CodeBlock";
@@ -98,14 +118,15 @@ const CourseView = () => {
 		}
 	};
 
-	const tooglePublish = async (e: SyntheticEvent, courseId: string) => {
+	const tooglePublish = async (value: string) => {
 		try {
 			let answer = window.confirm(
 				`Are you sure to ${course.published ? "un" : null}publish this course?`
 			);
 			if (!answer) return;
-
-			const { data } = await axios.put(`/api/course/publish/${courseId}`);
+			const { data } = await axios.put(`/api/publish-course/${course._id}`, {
+				publishStatus: value,
+			});
 			setCourse(data);
 			toast("Congrats!");
 		} catch (err) {
@@ -130,7 +151,10 @@ const CourseView = () => {
 			<div className="container-fluid pt-3">
 				{course && (
 					<div className="container-fluid pt-1">
-						<Avatar size={80} src={course.image ? course.image.Location : "/course.png"} />
+						<Avatar
+							size={80}
+							src={course.image ? course.image.Location : "/course.png"}
+						/>
 						<div className="media-body pl-2">
 							<div className="row">
 								<div className="col-8">
@@ -138,11 +162,16 @@ const CourseView = () => {
 									<p style={{ marginTop: "-1em" }}>
 										{course.lessons && course.lessons.length} Lessons
 									</p>
-									<p style={{ marginTop: "-1rem", fontSize: "0.8rem" }}>{course.category}</p>
+									<p style={{ marginTop: "-1rem", fontSize: "0.8rem" }}>
+										{course.category}
+									</p>
 								</div>
 								<div className="d-flex col-4">
 									<div className="mr-4">
-										<Select defaultValue={`${course.published}`}>
+										<Select
+											defaultValue={`${course.published}`}
+											onChange={(v) => tooglePublish(v)}
+										>
 											<Select.Option value="true">Published</Select.Option>
 											<Select.Option value="false">Not Published</Select.Option>
 										</Select>
@@ -161,12 +190,16 @@ const CourseView = () => {
 									{course.lessons && course.lessons.length < 5 ? (
 										<Tooltip
 											title="Minimal 5 lessons are required to publish"
-											children={<QuestionOutlined className="h5 pointer text-danger mr-4" />}
+											children={
+												<QuestionOutlined className="h5 pointer text-danger mr-4" />
+											}
 										/>
 									) : (
 										<Tooltip
 											title="Published"
-											children={<CheckOutlined className="h5 pointer text-warning mr-4" />}
+											children={
+												<CheckOutlined className="h5 pointer text-warning mr-4" />
+											}
 										/>
 									)}
 								</div>
@@ -174,7 +207,9 @@ const CourseView = () => {
 							<hr />
 							<div className="row justify-content-center">
 								<div>
-									<ReactMarkdown components={CodeBlock}>{course.description}</ReactMarkdown>
+									<ReactMarkdown components={CodeBlock}>
+										{course.description}
+									</ReactMarkdown>
 									{/* description can now in MD format with basic html stylings*/}
 								</div>
 							</div>
@@ -209,7 +244,9 @@ const CourseView = () => {
 
 							<div className="row pb-5">
 								<div className="col lesson-list">
-									<h4>{course && course.lessons && course.lessons.length} Lessons</h4>
+									<h4>
+										{course && course.lessons && course.lessons.length} Lessons
+									</h4>
 									<List
 										itemLayout="horizontal"
 										dataSource={course && course.lessons}

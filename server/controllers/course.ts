@@ -281,6 +281,26 @@ export const updateLesson = async (req: Request, res: Response) => {
 		res.json(updateCourse);
 	} catch (err) {
 		console.log(err);
-		res.status(500).send("Add lesson failed");
+		res.status(500).send("Update lesson failed");
+	}
+};
+
+export const handleCoursePublish = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	const { publishStatus } = req.body;
+	if (!id) return res.json("Need course ID");
+	if (!publishStatus) return res.json("Need to know what to do");
+
+	const course = await Course.findById(id).select("instructor").exec();
+	if ((req.user as MongoUser)._id !== course.instructor._id.toString()) {
+		return res.status(400).send("Unauthorized to do this");
+	}
+	const published = publishStatus === true;
+	try {
+		const result = await Course.findByIdAndUpdate(id, { published });
+		res.json(result);
+	} catch (err) {
+		console.log(err);
+		res.status(500).send("Publish course failed");
 	}
 };

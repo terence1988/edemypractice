@@ -46,7 +46,10 @@ const EditCourse = () => {
 	const [preview, setPreview] = useState("");
 	const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
 	const [image, setImage] = useState<any>("");
-	const [editLesson, setEditLesson] = useState<{ modalvisible: boolean; editLessonId: ILesson }>({
+	const [editLesson, setEditLesson] = useState<{
+		modalvisible: boolean;
+		editLessonId: ILesson;
+	}>({
 		modalvisible: false,
 		editLessonId: { title: "", content: "", video: null, free_preview: false },
 	});
@@ -61,7 +64,9 @@ const EditCourse = () => {
 
 	//router
 	const router = useRouter();
-	const slug = router.query.slug || (process.browser && window.location.pathname.split("/").pop());
+	const slug =
+		router.query.slug ||
+		(process.browser && window.location.pathname.split("/").pop());
 
 	//Effects
 	useEffect(() => {
@@ -120,7 +125,7 @@ const EditCourse = () => {
 		}
 	};
 
-	const handleSubmit: FormEventHandler<any> = async (e: FormEvent) => {
+	const handleSubmitEdit: FormEventHandler<any> = async (e: FormEvent) => {
 		e.preventDefault();
 		try {
 			const { data } = await axios.put(
@@ -131,7 +136,6 @@ const EditCourse = () => {
 				},
 				{ withCredentials: true }
 			);
-			console.log(data);
 			toast("Course updated");
 			setTimeout(() => router.push(`/instructor/course/view/${slug}`), 5000);
 		} catch (err) {
@@ -167,7 +171,10 @@ const EditCourse = () => {
 		isLoading(true);
 		const file = e.currentTarget.files[0];
 		try {
-			if (editLesson.editLessonId.video && editLesson.editLessonId.video.Location) {
+			if (
+				editLesson.editLessonId.video &&
+				editLesson.editLessonId.video.Location
+			) {
 				const res = await axios.post(
 					`/api/course/video-remove/${course.instructor._id}`,
 					editLesson.editLessonId.video
@@ -193,7 +200,10 @@ const EditCourse = () => {
 			);
 			//once response received
 			console.log(data);
-			setEditLesson({ ...editLesson, editLessonId: { ...editLesson.editLessonId, video: data } });
+			setEditLesson({
+				...editLesson,
+				editLessonId: { ...editLesson.editLessonId, video: data },
+			});
 			setVideoUploadText("Upload Success");
 			setProgress(0);
 			isLoading(false);
@@ -272,7 +282,12 @@ const EditCourse = () => {
 			setVideoUploadText("Upload Video again");
 			setEditLesson({
 				...editLesson,
-				editLessonId: { title: "", content: "", video: null, free_preview: false },
+				editLessonId: {
+					title: "",
+					content: "",
+					video: null,
+					free_preview: false,
+				},
 			});
 			toast(error);
 		}
@@ -306,7 +321,12 @@ const EditCourse = () => {
 			setVideoUploadText("Upload Video");
 			setEditLesson({
 				modalvisible: false,
-				editLessonId: { title: "", content: "", video: null, free_preview: false },
+				editLessonId: {
+					title: "",
+					content: "",
+					video: null,
+					free_preview: false,
+				},
 			});
 			toast("Lesson updated");
 			fetchCourse();
@@ -317,7 +337,7 @@ const EditCourse = () => {
 	};
 
 	const editFormProps = {
-		handleSubmit,
+		handleSubmitEdit,
 		handleOnChange,
 		handleImage,
 		courseMetaData: course,
@@ -351,7 +371,10 @@ const EditCourse = () => {
 			</div>
 
 			<div className="row pb-5">
-				<div className="col lesson-list" onDragOver={(e: any) => e.preventDefault()}>
+				<div
+					className="col lesson-list"
+					onDragOver={(e: any) => e.preventDefault()}
+				>
 					<h4>{course && course.lessons && course.lessons.length} Lessons</h4>
 					<List
 						itemLayout="horizontal"

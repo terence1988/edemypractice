@@ -11,6 +11,7 @@ import {
 	TeamOutlined,
 	UserAddOutlined,
 } from "@ant-design/icons";
+import { NextPage } from "next";
 import { UserContext } from "../contexts";
 
 //logout request
@@ -24,7 +25,7 @@ const { Item, SubMenu, ItemGroup } = Menu;
 TODO: When server do a cold start, the prerendered view gets bugs
 */
 
-const TopNav = () => {
+const TopNav: NextPage = () => {
 	const [currentPage, setCurrentPage] = useState("");
 
 	const { state, dispatch } = useContext(UserContext);
@@ -53,7 +54,12 @@ const TopNav = () => {
 	};
 
 	return (
-		<Menu mode="horizontal" selectedKeys={[currentPage]}>
+		<Menu
+			mode="horizontal"
+			selectedKeys={[currentPage]}
+			style={{ display: "block" }}
+			forceSubMenuRender={true}
+		>
 			<Item
 				key="/"
 				icon={<AppstoreOutlined />}
@@ -110,11 +116,12 @@ const TopNav = () => {
 				)
 			)}
 
-			{user ? (
+			{user && (
 				<SubMenu
 					icon={<CoffeeOutlined />}
+					key={0}
 					title={user ? user.name : null}
-					className="float-end"
+					className="float-right"
 				>
 					<ItemGroup>
 						<Item key="/user" icon={<DotChartOutlined />} onClick={goDashboard}>
@@ -129,13 +136,13 @@ const TopNav = () => {
 						</Item>
 					</ItemGroup>
 				</SubMenu>
-			) : null}
+			)}
 
-			{user && user.role?.includes("Instructor") ? (
+			{user && user?.role?.includes("Instructor") ? (
 				<Item
-					className="float-end"
 					key="/instructor"
 					icon={<TeamOutlined />}
+					className="float-right"
 					onClick={(e) => setCurrentPage(e.key as string)}
 				>
 					<Link href="/instructor">
@@ -147,5 +154,4 @@ const TopNav = () => {
 	);
 };
 
-// It's not really what I needed
 export default TopNav;

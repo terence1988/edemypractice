@@ -24,6 +24,7 @@ import {
 	addLesson,
 	updateLesson,
 	removeLesson,
+	handleCoursePublish,
 } from "../controllers/course";
 
 import {
@@ -58,10 +59,36 @@ router.get("/api/instructor-courses", requireSignin, instructorCourses);
 //courses images and course
 router.post("/api/course", requireSignin, isInstructor, createCourse);
 router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
-router.put(`/api/course/:slug`, requireSignin, isInstructor, updateCourseBySlug);
-router.put(`/api/course/:slug/:lessonId`, requireSignin, isInstructor, removeLesson);
-router.post(`/api/course/lesson/:slug/:instructorId`, requireSignin, isInstructor, addLesson);
-router.put(`/api/course/lesson/:slug/:instructorId`, requireSignin, isInstructor, updateLesson);
+router.put(
+	`/api/course/:slug`,
+	requireSignin,
+	isInstructor,
+	updateCourseBySlug
+);
+router.put(
+	`/api/publish-course/:id`,
+	requireSignin,
+	isInstructor,
+	handleCoursePublish
+);
+router.put(
+	`/api/course/:slug/:lessonId`,
+	requireSignin,
+	isInstructor,
+	removeLesson
+);
+router.post(
+	`/api/course/lesson/:slug/:instructorId`,
+	requireSignin,
+	isInstructor,
+	addLesson
+);
+router.put(
+	`/api/course/lesson/:slug/:instructorId`,
+	requireSignin,
+	isInstructor,
+	updateLesson
+);
 router.post(
 	"/api/course/video-upload/:instructorId",
 	requireSignin,
@@ -69,7 +96,12 @@ router.post(
 	formidable(),
 	uploadVideo
 );
-router.post("/api/course/video-remove/:instructorId", requireSignin, isInstructor, removeVideo);
+router.post(
+	"/api/course/video-remove/:instructorId",
+	requireSignin,
+	isInstructor,
+	removeVideo
+);
 
 router.post("/api/course/upload-image", uploadImage);
 router.post("/api/course/remove-image", removeImage);
