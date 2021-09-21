@@ -1,14 +1,14 @@
-export {};
-module.exports = {
-	async rewrites() {
-		return [
-			{
-				source: "/api/:path*",
-				destination: "http://localhost:8000/api/:path*",
-			},
-		];
-	},
-};
+// export {};
+// module.exports = {
+// 	async rewrites() {
+// 		return [
+// 			{
+// 				source: "/api/:path*",
+// 				destination: "http://localhost:8000/api/:path*",
+// 			},
+// 		];
+// 	},
+// };
 
 //This works but as Next uses both FE/BE, on the same link, it can only tell the addr based on url so the url for FE/BE must be seperated
 

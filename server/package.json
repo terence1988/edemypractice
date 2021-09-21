@@ -12,7 +12,7 @@
 	"author": "",
 	"license": "ISC",
 	"_app_lib_comments": {
-		"helm": "a collection of 14 small middleware functions that set HTTP response headers."
+		"helmet": "a collection of 14 small middleware functions that set HTTP response headers."
 	},
 	"dependencies": {
 		"@fluent-org/logger": "^1.0.2",
