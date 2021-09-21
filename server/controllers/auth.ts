@@ -25,7 +25,8 @@ export const register = async (req: Request, res: Response) => {
 		if (!name) return res.status(400).send("Need a name");
 		if (!password || !validator.isStrongPassword(password, { minLength: 8 }))
 			return res.status(400).send("Need a strong password");
-		if (!validator.isEmail(email)) return res.status(400).send("Need a valid email");
+		if (!validator.isEmail(email))
+			return res.status(400).send("Need a valid email");
 		let userExisted = await User.findOne({ email }).exec();
 		if (userExisted) return res.status(400).send("Email has been used");
 		//hashPassword
@@ -34,10 +35,10 @@ export const register = async (req: Request, res: Response) => {
 		const user = new User({ name, email, password: hashedPassword });
 		await user.save();
 		console.log("Saved user", user);
-		return res.json({ ok: true });
+		res.json({ ok: true });
 	} catch (err) {
 		console.log(err);
-		return res.status(400).send("Error: " + JSON.stringify(err));
+		res.status(400).send("Error: " + JSON.stringify(err));
 	}
 };
 
@@ -47,18 +48,27 @@ export const login = async (req: Request, res: Response) => {
 		const { email, password } = req.body;
 		//email as unique data should be seen, needs validator
 		const user = await User.findOne({ email }).exec();
-		if (!user) return res.status(406).send("Invalid user name or password, please try again");
+		if (!user)
+			return res
+				.status(406)
+				.send("Invalid user name or password, please try again");
 		//hashPassword
 		const isMatched = await comparePassword(password, user.password);
-		if (!isMatched) return res.status(406).send("Invalid user name or password, please try again");
+		if (!isMatched)
+			return res
+				.status(406)
+				.send("Invalid user name or password, please try again");
 		//create token
-		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET as string, {
-			expiresIn: "7d",
-		});
+		const token = jwt.sign(
+			{ _id: user._id },
+			process.env.JWT_SECRET as string,
+			{
+				expiresIn: "7d",
+			}
+		);
 		// return user and token to client, exclude hashed password -- JWT has undefined somewhere
 		user.password = "";
 		//send token in cookie which is part of response header
-		console.log(user);
 		var expiryDate = new Date(Date.now() + 60 * 24 * 3600000);
 		res.cookie("token", token, {
 			expires: expiryDate,
@@ -70,16 +80,17 @@ export const login = async (req: Request, res: Response) => {
 		res.json(user);
 	} catch (err) {
 		console.log(err);
-		return res.status(400).send("Error: Try again");
+		res.status(400).send("Error: Try again");
 	}
 };
 
 export const logout = async (req: Request, res: Response) => {
 	try {
 		res.clearCookie("token");
-		return res.json({ message: "Signout successfully" });
+		res.json({ message: "Signout successfully" });
 	} catch (err) {
 		console.log(err);
+		res.send("Have some error");
 	}
 };
 
@@ -89,9 +100,10 @@ export const currentUser = async (req: Request, res: Response) => {
 			.select("-password")
 			.exec();
 		console.log("Current User found", user);
-		return res.json({ ok: true }); //save some bandwidth
+		res.json({ ok: true }); //save some bandwidth
 	} catch (err) {
 		console.error(err);
+		res.send("Have some error");
 	}
 };
 
@@ -138,7 +150,10 @@ export const forgetPassword = async (req: Request, res: Response) => {
 	try {
 		const { email } = req.body;
 		const shortCode = nanoid(8).toUpperCase();
-		const user = await User.findOneAndUpdate({ email }, { passwordResetCode: shortCode });
+		const user = await User.findOneAndUpdate(
+			{ email },
+			{ passwordResetCode: shortCode }
+		);
 		if (!user) return res.status(400).send("User not found");
 		//send these as email -- template and ses
 		const params = {
@@ -180,7 +195,7 @@ export const forgetPassword = async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		console.error(err);
-		return res.status(400).json("Encountered Errors");
+		res.status(400).send("Encountered Errors");
 	}
 };
 
@@ -193,9 +208,9 @@ export const resetPassword = async (req: Request, res: Response) => {
 			{ email, passwordResetCode: code },
 			{ password: newHashedPassword, passwordResetCode: "" }
 		).exec();
-		return res.json({ ok: true });
+		res.json({ ok: true });
 	} catch (err) {
 		console.error(err);
-		return res.status(400).json("Please try again");
+		res.status(400).json("Please try again");
 	}
 };

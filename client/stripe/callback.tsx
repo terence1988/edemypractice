@@ -1,14 +1,17 @@
-import { useContext, useEffect, useCallback } from "react";
-import { UserContext } from "../../contexts";
+import { useContext, useEffect, Dispatch } from "react";
+import { UserContext } from "../contexts";
 import { SyncOutlined } from "@ant-design/icons";
-import { IUser } from "../../types/User";
+import { IUser } from "@Itypes/User";
 import axios, { AxiosResponse } from "axios";
 
 const StripeCallback = () => {
 	const {
 		state: { user },
 		dispatch,
-	} = useContext<{ state: { user: IUser } }>(UserContext);
+	} =
+		useContext<{ state: { user: IUser }; dispatch: Dispatch<any> }>(
+			UserContext
+		);
 	//works
 	// const getCookie = (name: string) => {
 	// 	if (!document.cookie) {
@@ -61,7 +64,12 @@ const StripeCallback = () => {
 			});
 		}
 	}, [user]);
-	return <SyncOutlined spin className="d-flex justify-content-center display-1 text-danger p-5" />;
+	return (
+		<SyncOutlined
+			spin
+			className="d-flex justify-content-center display-1 text-danger p-5"
+		/>
+	);
 };
 
 export default StripeCallback;

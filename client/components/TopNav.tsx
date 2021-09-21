@@ -11,7 +11,6 @@ import {
 	TeamOutlined,
 	UserAddOutlined,
 } from "@ant-design/icons";
-import { NextPage } from "next";
 import { UserContext } from "../contexts";
 
 //logout request
@@ -25,15 +24,11 @@ const { Item, SubMenu, ItemGroup } = Menu;
 TODO: When server do a cold start, the prerendered view gets bugs
 */
 
-interface Props {
-	disableSSR: { user: unknown };
-}
-
-const TopNav: NextPage<Props> = ({ disableSSR }) => {
+const TopNav = () => {
 	const [currentPage, setCurrentPage] = useState("");
 
 	const { state, dispatch } = useContext(UserContext);
-	const { user } = disableSSR || state;
+	const { user } = state;
 
 	useEffect(() => {
 		process.browser && setCurrentPage(window.location.pathname);
@@ -59,7 +54,11 @@ const TopNav: NextPage<Props> = ({ disableSSR }) => {
 
 	return (
 		<Menu mode="horizontal" selectedKeys={[currentPage]}>
-			<Item key="/" icon={<AppstoreOutlined />} onClick={(e) => setCurrentPage(e.key as string)}>
+			<Item
+				key="/"
+				icon={<AppstoreOutlined />}
+				onClick={(e) => setCurrentPage(e.key as string)}
+			>
 				<Link href="/">
 					<a>Home</a>
 				</Link>
@@ -111,8 +110,12 @@ const TopNav: NextPage<Props> = ({ disableSSR }) => {
 				)
 			)}
 
-			{user && (
-				<SubMenu icon={<CoffeeOutlined />} title={user ? user.name : null} className="float-right">
+			{user ? (
+				<SubMenu
+					icon={<CoffeeOutlined />}
+					title={user ? user.name : null}
+					className="float-end"
+				>
 					<ItemGroup>
 						<Item key="/user" icon={<DotChartOutlined />} onClick={goDashboard}>
 							<Link href="/user">
@@ -126,11 +129,11 @@ const TopNav: NextPage<Props> = ({ disableSSR }) => {
 						</Item>
 					</ItemGroup>
 				</SubMenu>
-			)}
+			) : null}
 
 			{user && user.role?.includes("Instructor") ? (
 				<Item
-					className="float-right"
+					className="float-end"
 					key="/instructor"
 					icon={<TeamOutlined />}
 					onClick={(e) => setCurrentPage(e.key as string)}
@@ -144,10 +147,5 @@ const TopNav: NextPage<Props> = ({ disableSSR }) => {
 	);
 };
 
-export const getInitialProps = async () => {
-	const disableSSR = { user: {} };
-	console.log(disableSSR);
-	return { disableSSR };
-};
 // It's not really what I needed
 export default TopNav;

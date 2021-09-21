@@ -4,8 +4,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import morgan from "morgan";
 
-import { FluentClient } from "@fluent-org/logger";
-
 //routes
 import router from "./routes";
 require("dotenv").config(); //This is scoped as well, use package.json
@@ -15,36 +13,28 @@ import cookieParser from "cookie-parser";
 
 //csrf -- cross-site request forgery
 import csurf from "csurf";
-import helmet from "helmet";
 
 // create express app
 const app = express();
-
-// The 2nd argument can be omitted. Here is a default value for options.
-const logger = new FluentClient("fluentd.test", {
-	socket: {
-		host: "localhost",
-		port: 24224,
-		timeout: 3000, // 3 seconds
-	},
-});
 
 //configure csrf
 const csurfProtection = csurf({ cookie: true });
 
 // db
 mongoose
-	.connect(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/edemy`, {
-		useNewUrlParser: true,
-		useFindAndModify: false,
-		useUnifiedTopology: true,
-		useCreateIndex: true,
-	})
+	.connect(
+		`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/edemy`,
+		{
+			useNewUrlParser: true,
+			useFindAndModify: false,
+			useUnifiedTopology: true,
+			useCreateIndex: true,
+		}
+	)
 	.then(() => console.log("**DB CONNECTED**"))
 	.catch((err) => console.log("DB CONNECTION ERR => ", err));
 
 // apply middlewares
-app.use(helmet()) //see how it goes
 app.use(cors());
 app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
@@ -61,7 +51,6 @@ app.use(router);
 //csrf is behind routes to update next request's token
 app.use(csurfProtection);
 app.get("/api/csrfToken", (req: Request, res: Response) => {
-	logger.emit("Requester's Browser", req.headers); //Working -- Need to know what to log
 	res.json({ csrfToken: req.csrfToken() });
 });
 // port

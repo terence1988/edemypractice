@@ -37,7 +37,6 @@ const UserContext = createContext<any>({ state: initialState });
 const userRootReducer = (state: defaultUserContext, actions: Actions) => {
 	switch (actions.type) {
 		case UserActionsType.LOGIN:
-			console.log(actions.payload);
 			return { ...state, user: actions.payload };
 		case UserActionsType.LOGOUT:
 			return { ...state, user: undefined };
@@ -104,7 +103,11 @@ const UserProvider: FC = ({ children }) => {
 		}
 	);
 
-	return <UserContext.Provider value={{ state, dispatch }}>{children}</UserContext.Provider>;
+	return (
+		<UserContext.Provider value={{ state, dispatch }}>
+			{children}
+		</UserContext.Provider>
+	);
 };
 
 export { UserContext, UserProvider };

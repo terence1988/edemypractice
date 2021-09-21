@@ -15,7 +15,6 @@ const awsConfig = {
 	assessKeyId: process.env.AWS_ACCESS_KEY_ID,
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 	region: process.env.AWS_REGION,
-	apiVersion: process.env.AWS_API_VERSION,
 };
 
 const s3 = new S3(awsConfig);
@@ -32,12 +31,14 @@ export const uploadImage = async (req: Request, res: Response) => {
 		if (!image) return res.status(400).send("No image");
 
 		//prepare the image (image in base64 encoded format)
-		const base64Image = Buffer.from(image.replace(/^data:image\/\w+;base64,/, ""), "base64");
+		const base64Image = Buffer.from(
+			image.replace(/^data:image\/\w+;base64,/, ""),
+			"base64"
+		);
 		//base64 is offset
 
 		//image metadata
 		const type = image.split(";")[0].split("/")[1];
-		console.log(type);
 		const params: PutObjectRequest = {
 			Bucket: "tedemy-bucket",
 			Key: `${nanoid()}.${type}`, // nanoid.jpeg Key -> filename in S3
@@ -56,12 +57,11 @@ export const uploadImage = async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		console.log(err);
+		res.send("Had some errors");
 	}
 };
 
 export const removeImage = async (req: Request, res: Response) => {
-	console.log(req.body);
-	res.send({ ok: true });
 	try {
 		const { image } = req.body;
 		if (!image) return res.status(400).send("No image");
@@ -75,12 +75,14 @@ export const removeImage = async (req: Request, res: Response) => {
 		s3.deleteObject(params, (err, data) => {
 			if (err) {
 				console.log(err);
-				res.sendStatus(400);
+				return res.sendStatus(400);
+			} else {
+				return res.send({ ok: true });
 			}
-			res.send({ ok: true });
 		});
 	} catch (err) {
 		console.log(err);
+		res.send("Had some errors");
 	}
 };
 
@@ -102,7 +104,7 @@ export const createCourse = async (req: Request, res: Response) => {
 		res.json(course);
 	} catch (err) {
 		console.log(err);
-		return res.status(400).send("Course Create error, try again");
+		res.status(400).send("Course Create error, try again");
 	}
 };
 
@@ -114,7 +116,7 @@ export const getCourseBySlug = async (req: Request, res: Response) => {
 		res.json(course);
 	} catch (err) {
 		console.log(err);
-		return res.status(400).send("Fetch course errors");
+		res.status(400).send("Fetch course errors");
 	}
 };
 
@@ -122,18 +124,25 @@ export const updateCourseBySlug = async (req: Request, res: Response) => {
 	const { slug } = req.params;
 	try {
 		const updatedCourse: MongoCourse = await Course.findOne({ slug });
-		if ((req.user as MongoUser)._id.toString() !== updatedCourse.instructor.toString()) {
+		if (
+			(req.user as MongoUser)._id.toString() !==
+			updatedCourse.instructor.toString()
+		) {
 			return res.status(400).send("Unauthorized to do this");
 		}
-		const updateTheCourse: MongoCourse = await Course.findOneAndUpdate({ slug }, req.body, {
-			new: true,
-		}).exec();
+		const updateTheCourse: MongoCourse = await Course.findOneAndUpdate(
+			{ slug },
+			req.body,
+			{
+				new: true,
+			}
+		).exec();
 		//return updated data to FE
 
 		res.json(updateTheCourse);
 	} catch (err) {
 		console.log(err);
-		res.sendStatus(500);
+		res.send("Got some error line:145");
 	}
 };
 
@@ -167,7 +176,7 @@ export const uploadVideo = async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		console.log(err);
-		return res.sendStatus(500);
+		res.sendStatus(500);
 	}
 };
 
@@ -198,14 +207,13 @@ export const removeVideo = async (req: Request, res: Response) => {
 		});
 	} catch (err) {
 		console.log(err);
-		return res.sendStatus(500);
+		res.sendStatus(500);
 	}
 };
 
 export const addLesson = async (req: Request, res: Response) => {
 	const { slug, instructorId } = req.params;
 	const { title, content, video } = req.body;
-	console.log(title);
 	if ((req.user as MongoUser)._id !== instructorId) {
 		return res.status(400).send("Unauthorized to do this");
 	}
@@ -221,14 +229,17 @@ export const addLesson = async (req: Request, res: Response) => {
 		res.json(updatedCourse);
 	} catch (err) {
 		console.log(err);
-		return res.status(500).send("Add lesson failed");
+		res.status(500).send("Add lesson failed");
 	}
 };
 
 export const removeLesson = async (req: Request, res: Response) => {
 	const { slug, lessonId } = req.params;
 	const updatedCourse: MongoCourse = await Course.findOne({ slug }).exec();
-	if ((req.user as MongoUser)._id.toString() !== updatedCourse.instructor.toString()) {
+	if (
+		(req.user as MongoUser)._id.toString() !==
+		updatedCourse.instructor.toString()
+	) {
 		return res.status(400).send("Unauthorized to do this");
 	}
 	try {
@@ -240,7 +251,7 @@ export const removeLesson = async (req: Request, res: Response) => {
 		res.json(updateCourse);
 	} catch (err) {
 		console.log(err);
-		return res.status(500).send("Add lesson failed");
+		res.status(500).send("Add lesson failed");
 	}
 };
 
@@ -249,7 +260,6 @@ export const updateLesson = async (req: Request, res: Response) => {
 	const { slug, instructorId } = req.params;
 	const { _id, title, content, video, free_preview } = req.body;
 	const course = await Course.findOne({ slug }).select("instructor").exec();
-	console.log(course);
 	if (course.instructor._id.toString() !== instructorId.toString()) {
 		return res.status(400).send("Unauthorized to do this");
 	}
@@ -268,9 +278,9 @@ export const updateLesson = async (req: Request, res: Response) => {
 			{ new: true }
 		).exec();
 
-		return res.json(updateCourse);
+		res.json(updateCourse);
 	} catch (err) {
 		console.log(err);
-		return res.status(500).send("Add lesson failed");
+		res.status(500).send("Add lesson failed");
 	}
 };
