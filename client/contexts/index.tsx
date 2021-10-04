@@ -29,6 +29,11 @@ const initialState: defaultUserContext = {
 	user: null,
 };
 
+// if auth is found in localstorage, use that as default value
+if (process.browser && window.localStorage.getItem("x-next-user")) {
+	initialState.user = JSON.parse(window.localStorage.getItem("x-next-user"));
+}
+
 //create context
 const UserContext = createContext<any>({ state: initialState });
 
@@ -39,13 +44,13 @@ const userRootReducer = (state: defaultUserContext, actions: Actions) => {
 		case UserActionsType.LOGIN:
 			return { ...state, user: actions.payload };
 		case UserActionsType.LOGOUT:
-			return { ...state, user: undefined };
+			return { ...state, user: null };
 		default:
 			return { ...state };
 	}
 };
 
-const UserProvider: FC = ({ children }) => {
+const UserProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(userRootReducer, initialState);
 	//const memoizedUser = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
@@ -54,23 +59,10 @@ const UserProvider: FC = ({ children }) => {
 	useEffect(() => {
 		//when browser is closed, the window.localStorage get cleared!!!
 		const currentUser = window.localStorage.getItem("x-next-user");
-
-		console.log(currentUser);
 		dispatch({
 			type: UserActionsType.LOGIN,
 			payload: JSON.parse(currentUser),
 		});
-	}, []);
-	//auth csrf token
-	useEffect(() => {
-		const getCsrfToken = async () => {
-			const { data } = await axios.get("/api/csrfToken");
-			console.log("CSRF: ==>", data);
-			axios.defaults.headers.common["X-CSRF-Token"] = data.csrfToken;
-			//axios.defaults.headers["X-CSRF-Token"] = data.csrfToken;
-		};
-		//https://github.com/axios/axios/issues/1346
-		getCsrfToken();
 	}, []);
 
 	axios.interceptors.response.use(
@@ -79,10 +71,9 @@ const UserProvider: FC = ({ children }) => {
 
 			return response;
 		},
-		function (err: any) {
+		function (err) {
 			//any other error status code //!res.config.__isRetryRequest
 			let res = err.response;
-			console.log(err);
 			if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
 				return new Promise((resolve, reject) => {
 					axios
@@ -102,6 +93,17 @@ const UserProvider: FC = ({ children }) => {
 			return Promise.reject(err);
 		}
 	);
+	//auth csrf token
+	useEffect(() => {
+		const getCsrfToken = async () => {
+			const { data } = await axios.get("/api/csrfToken");
+			//console.log("CSRF: ==>", data);
+			axios.defaults.headers.common["X-CSRF-Token"] = data.csrfToken;
+			//axios.defaults.headers["X-CSRF-Token"] = data.csrfToken;
+		};
+		//https://github.com/axios/axios/issues/1346
+		getCsrfToken();
+	}, []);
 
 	return (
 		<UserContext.Provider value={{ state, dispatch }}>

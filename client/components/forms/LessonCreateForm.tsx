@@ -1,6 +1,6 @@
 import { CloseCircleFilled } from "@ant-design/icons";
 import { Button, Progress, Tooltip } from "antd";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, Dispatch, SetStateAction } from "react";
 import { FormEvent, ChangeEventHandler, FormEventHandler } from "react";
 import { ILesson } from "../../types/Lesson";
 
@@ -9,7 +9,7 @@ import { ILesson } from "../../types/Lesson";
 interface LessonCreateFormProps {
 	lessonData: ILesson;
 	loading: boolean;
-	setLessonData: Function;
+	setLessonData: Dispatch<SetStateAction<ILesson>>;
 	handleAddLesson: FormEventHandler<any>;
 	videoUploadText: string;
 	handleVideo: ChangeEventHandler<HTMLInputElement>;
@@ -66,7 +66,11 @@ const LessonCreateForm = ({
 				</div>
 				{/* Progress is a Web API provided Object(browser API) so it does not show upload to s3 */}
 				{progress > 0 ? (
-					<Progress className="d-flex justify-content-center pt-2" percent={progress} steps={10} />
+					<Progress
+						className="d-flex justify-content-center pt-2"
+						percent={progress}
+						steps={10}
+					/>
 				) : null}
 				<Button
 					type="primary"

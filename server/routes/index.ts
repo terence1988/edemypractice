@@ -60,7 +60,7 @@ router.get("/api/instructor-courses", requireSignin, instructorCourses);
 //courses images and course
 router.get("/api/courses", getCourses);
 router.post("/api/course", requireSignin, isInstructor, createCourse);
-router.get(`/api/course/:slug`, requireSignin, getCourseBySlug);
+router.get(`/api/course/:slug`, getCourseBySlug);
 router.put(
 	`/api/course/:slug`,
 	requireSignin,

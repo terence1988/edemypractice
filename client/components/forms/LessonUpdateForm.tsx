@@ -1,5 +1,5 @@
 import { Button, Progress, Tooltip, Switch } from "antd";
-import { MouseEventHandler, useEffect } from "react";
+import { MouseEventHandler, useEffect, Dispatch, SetStateAction } from "react";
 import { FormEvent, ChangeEventHandler, FormEventHandler } from "react";
 import toast from "react-toastify";
 import { ILesson } from "../../types/Lesson";
@@ -11,7 +11,7 @@ import ReactPlayer from "react-player";
 interface LessonCreateFormProps {
 	editLesson: { modalvisible: boolean; editLessonId: ILesson };
 	loading: boolean;
-	setEditLesson: Function;
+	setEditLesson: Dispatch<SetStateAction<{}>>;
 	handleUpdateLesson: FormEventHandler<any>;
 	videoUploadText: string;
 	setVideoUploadText: Function;
@@ -46,7 +46,10 @@ const LessonUpdateForm = ({
 					onChange={(e: FormEvent<HTMLInputElement>) =>
 						setEditLesson({
 							...editLesson,
-							editLessonId: { ...editLesson.editLessonId, title: e.currentTarget.value },
+							editLessonId: {
+								...editLesson.editLessonId,
+								title: e.currentTarget.value,
+							},
 						})
 					}
 					value={editLesson.editLessonId.title}
@@ -63,7 +66,10 @@ const LessonUpdateForm = ({
 					onChange={(e) => {
 						setEditLesson({
 							...editLesson,
-							editLessonId: { ...editLesson.editLessonId, content: e.currentTarget.value },
+							editLessonId: {
+								...editLesson.editLessonId,
+								content: e.currentTarget.value,
+							},
 						});
 					}}
 				/>
@@ -71,7 +77,12 @@ const LessonUpdateForm = ({
 				<div className="d-flex justify-content-center">
 					<label className="btn btn-dark btn-block text-left mt-3">
 						{videoUploadText}
-						<input type="file" accept="video/*" hidden onChange={handleUpdateVideo} />
+						<input
+							type="file"
+							accept="video/*"
+							hidden
+							onChange={handleUpdateVideo}
+						/>
 					</label>
 				</div>
 
@@ -87,7 +98,11 @@ const LessonUpdateForm = ({
 				)}
 				{/* Progress is a Web API provided Object(browser API) so it does not show upload to s3 */}
 				{progress > 0 ? (
-					<Progress className="d-flex justify-content-center pt-2" percent={progress} steps={10} />
+					<Progress
+						className="d-flex justify-content-center pt-2"
+						percent={progress}
+						steps={10}
+					/>
 				) : null}
 
 				<div className="d-flex justify-content-between">
@@ -115,7 +130,8 @@ const LessonUpdateForm = ({
 					size="large"
 					onClick={handleUpdateLesson}
 					disabled={
-						!Boolean(editLesson.editLessonId.title) || !Boolean(editLesson.editLessonId.content)
+						!Boolean(editLesson.editLessonId.title) ||
+						!Boolean(editLesson.editLessonId.content)
 					}
 					loading={loading}
 				>
