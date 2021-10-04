@@ -13,3 +13,16 @@ The Dependency inversion principle: "Depend upon abstractions, [not] concretions
 
 ### SOLID
 https://hackernoon.com/understanding-solid-principles-in-javascript-w1cx3yrv
+
+
+### Github API
+?raw=true
+
+### spacing in CSS
+layout and spacing using px to make sure the correct layout
+
+### Image Wrapper
+It does not look right at the moment, need to find a better example
+
+
+### Context : function, block and global () sys env

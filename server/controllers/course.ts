@@ -295,12 +295,19 @@ export const handleCoursePublish = async (req: Request, res: Response) => {
 	if ((req.user as MongoUser)._id !== course.instructor._id.toString()) {
 		return res.status(400).send("Unauthorized to do this");
 	}
-	const published = publishStatus === true;
+	const published = publishStatus === "true";
 	try {
-		const result = await Course.findByIdAndUpdate(id, { published });
+		const result = await Course.findByIdAndUpdate(id, { published: published });
 		res.json(result);
 	} catch (err) {
 		console.log(err);
 		res.status(500).send("Publish course failed");
 	}
+};
+
+export const getCourses = async (req: Request, res: Response) => {
+	const allCourses = await Course.find({ published: true })
+		.populate("instructor", "_id name")
+		.exec();
+	res.json(allCourses);
 };

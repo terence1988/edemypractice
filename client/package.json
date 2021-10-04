@@ -13,7 +13,11 @@
 		"react-markdown": "Looks like a lib for SSG/SSR",
 		"ghost": "local headless CMS",
 		"Other utils": "Stripe, Auth0",
-		"Urls diff": "https://www.linkedin.com/post-inspector/inspect/"
+		"Urls diff": "https://www.linkedin.com/post-inspector/inspect/",
+		"major-minor-patch": "major.minor.patch or break_change.featre_change.bug_fix",
+		"operators": "^| latest with current major fixed. ~| latest with the curent major and minor fixed",
+		"webpack-vs-nodemon": "Webpack watch all css,js,html and restart the server, nodemon is only for ts/js",
+		"import-require": "Still have syntax issues whem import packages"
 	},
 	"keywords": [],
 	"author": "",
@@ -33,6 +37,7 @@
 		"react-dom": "^17.0.1",
 		"react-hook-form": "^7.12.0",
 		"react-image-file-resizer": "^0.4.7",
+		"react-image-wrapper": "^1.0.4",
 		"react-markdown": "^7.0.0",
 		"react-password-strength-bar": "^0.3.5",
 		"react-player": "^2.9.0",

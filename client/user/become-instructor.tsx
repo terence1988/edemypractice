@@ -1,11 +1,14 @@
 import { useContext, useState } from "react";
-import { UserContext } from "../../contexts";
+import { UserContext } from "../contexts";
 import { Button } from "antd";
 import axios, { AxiosResponse } from "axios";
-import { SettingOutlined, UserSwitchOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+	SettingOutlined,
+	UserSwitchOutlined,
+	LoadingOutlined,
+} from "@ant-design/icons";
 import { toast } from "react-toastify";
-import UserRoute from "../../components/routes/UserRoute";
-import { IUser } from "../../types/User";
+import { IUser } from "@Itypes/User";
 
 const BecomeInstructor = () => {
 	const [loading, setLoading] = useState(false);
@@ -56,7 +59,9 @@ const BecomeInstructor = () => {
 						>
 							{loading ? "Processing" : "Payout Setup"}
 						</Button>
-						<p className="lead">You will be redirected to stripe to complete onboarding process.</p>
+						<p className="lead">
+							You will be redirected to stripe to complete onboarding process.
+						</p>
 					</div>
 				</div>
 			</div>
