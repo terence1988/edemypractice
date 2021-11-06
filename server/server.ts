@@ -54,7 +54,7 @@ app.use(cookieParser());
 //The default time for a Cookie to expire is 30 minutes.
 
 app.use(morgan("dev"));
-//single route not a miidleware for all routes
+//Monitor miidleware for all routes
 
 app.use(router);
 

@@ -3,6 +3,8 @@ declare global {
 		interface ProcessEnv {
 			NODE_ENV: "development" | "production";
 			PORT?: string;
+			DATABASE_HOST:string;
+			DATABASE_PORT:string;
 			JWT_SECRET: string;
 			AWS_ACCESS_KEY_ID: string;
 			AWS_SECRET_ACCESS_KEY: string;

@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction } from "react";
 interface SingleCourseLessonsProps {
 	lessons: any[];
 	setPreview: Dispatch<SetStateAction<string>>;
-	showModal: Dispatch<SetStateAction<boolean>>;
+	showModal: boolean;
 	setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -31,7 +31,18 @@ const SingleCourseLessons = ({
 									<List.Item.Meta
 										avatar={<Avatar>{index + 1}</Avatar>}
 										title={item.title}
-									></List.Item.Meta>
+									>
+										{item.video && item.video !== null && item.free_preview && (
+											<span
+												onClick={() => {
+													setPreview(item.video.Location);
+													setShowModal(!showModal);
+												}}
+											>
+												Preview
+											</span>
+										)}
+									</List.Item.Meta>
 								</List.Item>
 							);
 						}}

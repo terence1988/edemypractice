@@ -95,3 +95,6 @@ export default Login;
 // 	"email":"fayer@gmail.com",
 // 	"password":"13231323Zxcv."
 // }
+
+
+// In JavaScript, super refers to the parent class constructor. (In our example, it points to the React.Component implementation.)
