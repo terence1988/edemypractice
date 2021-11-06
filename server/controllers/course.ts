@@ -10,11 +10,12 @@ import Course from "../models/course";
 import { MongoCourse } from "../types/Course";
 import { MongoUser } from "../types/User";
 import { ILesson } from "../types/Lesson";
+import User from "../models/user";
 
 const awsConfig = {
 	assessKeyId: process.env.AWS_ACCESS_KEY_ID,
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-	region: process.env.AWS_REGION,
+	region: process.env.AWS_REGION
 };
 
 const s3 = new S3(awsConfig);
@@ -31,10 +32,7 @@ export const uploadImage = async (req: Request, res: Response) => {
 		if (!image) return res.status(400).send("No image");
 
 		//prepare the image (image in base64 encoded format)
-		const base64Image = Buffer.from(
-			image.replace(/^data:image\/\w+;base64,/, ""),
-			"base64"
-		);
+		const base64Image = Buffer.from(image.replace(/^data:image\/\w+;base64,/, ""), "base64");
 		//base64 is offset
 
 		//image metadata
@@ -44,7 +42,7 @@ export const uploadImage = async (req: Request, res: Response) => {
 			Key: `${nanoid()}.${type}`, // nanoid.jpeg Key -> filename in S3
 			Body: base64Image,
 			ACL: "public-read",
-			ContentType: `image/${type}`,
+			ContentType: `image/${type}`
 		};
 		//upload to s3
 		s3.upload(params, (err: Error, data: S3.ManagedUpload.SendData) => {
@@ -69,7 +67,7 @@ export const removeImage = async (req: Request, res: Response) => {
 		//image params from client ????
 		const params: PutObjectRequest = {
 			Bucket: image.Bucket,
-			Key: image.Key,
+			Key: image.Key
 		};
 
 		s3.deleteObject(params, (err, data) => {
@@ -91,7 +89,7 @@ export const removeImage = async (req: Request, res: Response) => {
 export const createCourse = async (req: Request, res: Response) => {
 	try {
 		const alreadyExist = await Course.findOne({
-			slug: slugify((req.body as MongoCourse).name.toLowerCase()),
+			slug: slugify((req.body as MongoCourse).name.toLowerCase())
 		});
 		if (alreadyExist) return res.status(400).send("Title has been used");
 
@@ -99,7 +97,7 @@ export const createCourse = async (req: Request, res: Response) => {
 		const course = await new Course({
 			slug: slugify((req.body as MongoCourse).name),
 			instructor: (req.user as MongoUser)._id,
-			...req.body,
+			...req.body
 		}).save();
 		res.json(course);
 	} catch (err) {
@@ -124,19 +122,12 @@ export const updateCourseBySlug = async (req: Request, res: Response) => {
 	const { slug } = req.params;
 	try {
 		const updatedCourse: MongoCourse = await Course.findOne({ slug });
-		if (
-			(req.user as MongoUser)._id.toString() !==
-			updatedCourse.instructor.toString()
-		) {
+		if ((req.user as MongoUser)._id.toString() !== updatedCourse.instructor.toString()) {
 			return res.status(400).send("Unauthorized to do this");
 		}
-		const updateTheCourse: MongoCourse = await Course.findOneAndUpdate(
-			{ slug },
-			req.body,
-			{
-				new: true,
-			}
-		).exec();
+		const updateTheCourse: MongoCourse = await Course.findOneAndUpdate({ slug }, req.body, {
+			new: true
+		}).exec();
 		//return updated data to FE
 
 		res.json(updateTheCourse);
@@ -163,7 +154,7 @@ export const uploadVideo = async (req: Request, res: Response) => {
 			Key: `${nanoid()}.${video.type.split("/")[1]}`, // nanoid.jpeg Key -> filename in S3
 			Body: readFileSync(video.path),
 			ACL: "public-read",
-			ContentType: `${video.type}`, //video/mp4
+			ContentType: `${video.type}` //video/mp4
 		};
 		//upload to s3
 		s3.upload(params, (err: Error, data: S3.ManagedUpload.SendData) => {
@@ -194,7 +185,7 @@ export const removeVideo = async (req: Request, res: Response) => {
 		// after upload, file is in /tmp
 		const params: DeleteObjectRequest = {
 			Bucket: video.Bucket,
-			Key: video.Key,
+			Key: video.Key
 		};
 		//upload to s3
 		s3.deleteObject(params, (err: Error, data: S3.DeleteObjectOutput) => {
@@ -236,10 +227,7 @@ export const addLesson = async (req: Request, res: Response) => {
 export const removeLesson = async (req: Request, res: Response) => {
 	const { slug, lessonId } = req.params;
 	const updatedCourse: MongoCourse = await Course.findOne({ slug }).exec();
-	if (
-		(req.user as MongoUser)._id.toString() !==
-		updatedCourse.instructor.toString()
-	) {
+	if ((req.user as MongoUser)._id.toString() !== updatedCourse.instructor.toString()) {
 		return res.status(400).send("Unauthorized to do this");
 	}
 	try {
@@ -272,8 +260,8 @@ export const updateLesson = async (req: Request, res: Response) => {
 					"lessons.$.title": title,
 					"lessons.$.content": content,
 					"lessons.$.video": video,
-					"lessons.$.free_preview": free_preview,
-				},
+					"lessons.$.free_preview": free_preview
+				}
 			},
 			{ new: true }
 		).exec();
@@ -310,4 +298,28 @@ export const getCourses = async (req: Request, res: Response) => {
 		.populate("instructor", "_id name")
 		.exec();
 	res.json(allCourses);
+};
+
+export const checkEnrollment = async (req: Request, res: Response) => {
+	try {
+		const { courseId } = req.params;
+		//find courses of tyhe currrently logged in user
+		const user = await User.findById((req?.user as MongoUser)._id).exec();
+		//check if course id is found in the user courses array
+		let ids: string[] = [];
+		//mongoose string does not restricted to string
+		if (user && user.course) {
+			for (let i = 0; i < user.courses.length; i++) {
+				ids.push(user.courses[i].toString());
+			}
+			return res.json({
+				status: ids.includes(courseId),
+				course: await Course.findById(courseId).exec()
+			});
+		}
+		res.json({ status: ids.includes(courseId), course: [] });
+	} catch (error) {
+		console.log(error);
+		res.json(error);
+	}
 };

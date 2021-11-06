@@ -31,15 +31,11 @@ const TopNav: NextPage = () => {
 	const { state, dispatch } = useContext(UserContext);
 	const { user } = state;
 
+	const [view, setView] = useState(<></>);
+
 	useEffect(() => {
 		process.browser && setCurrentPage(window.location.pathname);
 	}, [process.browser && window.location.pathname]);
-	//as Next uses ssg
-	useEffect(() => {
-		console.log(window.localStorage.getItem("x-next-user"));
-		if (process.browser && !window.localStorage.getItem("x-next-user"))
-			dispatch({ type: "LOGOUT" });
-	}, []);
 
 	const logout = async () => {
 		dispatch({ type: "LOGOUT" });
@@ -53,8 +49,8 @@ const TopNav: NextPage = () => {
 		router.push("/user");
 	};
 
-	return (
-		<Menu
+	useEffect(() => {
+		setView(<Menu
 			mode="horizontal"
 			selectedKeys={[currentPage]}
 			style={{ display: "block" }}
@@ -121,7 +117,7 @@ const TopNav: NextPage = () => {
 					icon={<CoffeeOutlined />}
 					key={0}
 					title={user ? user.name : null}
-					className="float-right"
+					className="float-end"
 				>
 					<ItemGroup>
 						<Item key="/user" icon={<DotChartOutlined />} onClick={goDashboard}>
@@ -137,12 +133,11 @@ const TopNav: NextPage = () => {
 					</ItemGroup>
 				</SubMenu>
 			)}
-
 			{user && user?.role?.includes("Instructor") ? (
 				<Item
 					key="/instructor"
 					icon={<TeamOutlined />}
-					className="float-right"
+					className="float-end"
 					onClick={(e) => setCurrentPage(e.key as string)}
 				>
 					<Link href="/instructor">
@@ -150,7 +145,13 @@ const TopNav: NextPage = () => {
 					</Link>
 				</Item>
 			) : null}
-		</Menu>
+		</Menu>);
+	}, []);
+
+	//lib error, wrap it or assign useLayoutEffect = useEffect
+
+	return (
+		view
 	);
 };
 

@@ -26,6 +26,7 @@ import {
 	removeLesson,
 	handleCoursePublish,
 	getCourses,
+	checkEnrollment
 } from "../controllers/course";
 
 import {
@@ -104,6 +105,8 @@ router.post(
 	isInstructor,
 	removeVideo
 );
+
+router.get(`/api/check-enrolment/:courseId`,requireSignin,checkEnrollment)
 
 router.post("/api/course/upload-image", uploadImage);
 router.post("/api/course/remove-image", removeImage);

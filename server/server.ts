@@ -25,8 +25,8 @@ const logger = new FluentClient("fluentd.test", {
 	socket: {
 		host: "localhost",
 		port: 24224,
-		timeout: 3000, // 3 seconds
-	},
+		timeout: 3000 // 3 seconds
+	}
 });
 
 //configure csrf
@@ -34,15 +34,7 @@ const csurfProtection = csurf({ cookie: true });
 
 // db
 mongoose
-	.connect(
-		`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/edemy`,
-		{
-			useNewUrlParser: true,
-			useFindAndModify: false,
-			useUnifiedTopology: true,
-			useCreateIndex: true,
-		}
-	)
+	.connect(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/edemy`)
 	.then(() => console.log("**DB CONNECTED**"))
 	.catch((err) => console.log("DB CONNECTION ERR => ", err));
 
