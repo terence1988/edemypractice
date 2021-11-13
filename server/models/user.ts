@@ -6,36 +6,37 @@ const userSchema = new Schema(
 		name: {
 			type: String,
 			trim: true,
-			required: true,
+			required: true
 		},
 		email: {
 			type: String,
 			trim: true,
 			required: true,
-			unique: true,
+			unique: true
 		},
 		password: {
 			type: String,
 			required: true,
 			min: 6,
-			max: 64,
+			max: 64
 		},
 		picture: {
 			type: String,
-			default: "/avatar.png",
+			default: "/avatar.png"
 		},
 		role: {
 			type: [String],
 			default: ["Subscriber"],
-			enum: ["Subscriber", "Instructor", "Admin"],
+			enum: ["Subscriber", "Instructor", "Admin"]
 		},
+		courses: [{ type: Schema.Types.ObjectId, ref: "Course" }],
 		stripe_account_id: "",
 		stripe_seller: {},
 		stripeSession: {},
 		passwordResetCode: {
 			data: String,
-			default: "",
-		},
+			default: ""
+		}
 	},
 	{ timestamps: true }
 );

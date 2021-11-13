@@ -26,7 +26,9 @@ import {
 	removeLesson,
 	handleCoursePublish,
 	getCourses,
-	checkEnrollment
+	checkEnrollment,
+	freeEnrollment,
+	paidEnrollment
 } from "../controllers/course";
 
 import {
@@ -106,7 +108,15 @@ router.post(
 	removeVideo
 );
 
-router.get(`/api/check-enrolment/:courseId`,requireSignin,checkEnrollment)
+router.get(`/api/check-enrollment/:courseId`,requireSignin,checkEnrollment)
+
+//enrolment
+router.post(`/api/free-enrollment/:courseId`,requireSignin,freeEnrollment)
+router.post(`/api/paid-enrollment/:courseId`,requireSignin,paidEnrollment)
+
+
+
+
 
 router.post("/api/course/upload-image", uploadImage);
 router.post("/api/course/remove-image", removeImage);

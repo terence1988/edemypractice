@@ -26,7 +26,7 @@ const CourseCreateForm = ({
 	removeImage: MouseEventHandler<any>;
 	preview: string;
 	uploadButtonText: string;
-	editPage: boolean;
+	editPage?: boolean;
 }) => {
 	const children = [];
 	for (let i = 9.99; i <= 100; i += 10) {

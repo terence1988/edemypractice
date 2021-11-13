@@ -19,7 +19,7 @@ interface SingleCourseJumbotronPros {
 	setLoading: React.Dispatch<SetStateAction<boolean>>;
 	handlePaidEnrollment: MouseEventHandler;
 	handleFreeEnrollment: MouseEventHandler;
-	enrolled: { status: boolean; course: any[] };
+	enrolled: { status: boolean; course: any };
 }
 
 function SingleCourseJumbotron({
@@ -47,7 +47,7 @@ function SingleCourseJumbotron({
 					<p>Created by {instructor.name}</p>
 					<p>Last Updated {new Date(updatedAt).toLocaleDateString()}</p>
 					<h4 className="text-light">
-						{paid ? currencyFormatter({ currency: "usd", amount: price }) : "Free"}
+						{paid === 'paid' ? currencyFormatter({ currency: "usd", amount: price }) : "Free"}
 					</h4>
 				</div>
 				<div className="col-md-4">
@@ -84,7 +84,7 @@ function SingleCourseJumbotron({
 							endIcon={<SafetyCertificateFilled />}
 							size="large"
 							disabled={loading}
-							onClick={paid ? handleFreeEnrollment : handleFreeEnrollment}
+							onClick={paid === 'free' ? handleFreeEnrollment : handlePaidEnrollment}
 						>
 							{user ? (enrolled.status ? "Go to course" : "Enrol") : "Login to enroll"}
 						</Button>

@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { DeleteObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
 import slugify from "slugify";
 import { readFileSync } from "fs";
-
+import Stripe from "stripe";
 import Course from "../models/course";
 import { MongoCourse } from "../types/Course";
 import { MongoUser } from "../types/User";
@@ -19,6 +19,9 @@ const awsConfig = {
 };
 
 const s3 = new S3(awsConfig);
+
+//old undefined error
+const stripe = new Stripe(process?.env?.STRIPE_SECRET!, { apiVersion: "2020-08-27" });
 
 function sha256(data: string) {
 	return crypto.createHash("sha256").update(data, "binary").digest("base64");
@@ -308,7 +311,7 @@ export const checkEnrollment = async (req: Request, res: Response) => {
 		//check if course id is found in the user courses array
 		let ids: string[] = [];
 		//mongoose string does not restricted to string
-		if (user && user.course) {
+		if (user && user.courses) {
 			for (let i = 0; i < user.courses.length; i++) {
 				ids.push(user.courses[i].toString());
 			}
@@ -317,9 +320,79 @@ export const checkEnrollment = async (req: Request, res: Response) => {
 				course: await Course.findById(courseId).exec()
 			});
 		}
+		console.log(ids);
 		res.json({ status: ids.includes(courseId), course: [] });
 	} catch (error) {
 		console.log(error);
 		res.json(error);
+	}
+};
+
+export const freeEnrollment = async (req: Request, res: Response) => {
+	try {
+		//check if course is free or paid
+		const course = await Course.findById(req.params.courseId).exec();
+		if (course.paid.toString() === "paid") return;
+
+		const result = await User.findByIdAndUpdate(
+			(req?.user as MongoUser)._id,
+			{
+				$addToSet: { courses: course._id }
+				//adds a value to an array unless the value is already present,
+			},
+			{ new: true }
+		).exec();
+		return res.json({
+			message: `You have enrolled the course`,
+			course
+		});
+	} catch (err) {
+		console.log("free enrollment err", err);
+		return res.status(400).send(`Enrollment create failed`);
+	}
+};
+
+export const paidEnrollment = async (req: Request, res: Response) => {
+	//session id => stripe checkout process
+	// success / fail
+	try {
+		const course = await Course.findById(req.params.courseId).populate("instructor").exec();
+		if (course.paid.toString(0) === "free") return;
+
+		// application fee 30%
+		const fee = (course.price * 30) / 100;
+		//create stripe session
+		//1. session to stripe
+
+		const session = await stripe.checkout.sessions.create({
+			payment_method_types: ["card"],
+			line_items: [
+				{
+					name: course.name,
+					amount: Math.round(Number(course.price.toFixed(2)) * 100),
+					currency: "usd",
+					quantity: 1
+				}
+			],
+			//charge buyer and transfer the remaining balance to seller (after fee)
+			payment_intent_data: {
+				application_fee_amount: Math.round(Number(fee.toFixed(2)) * 100),
+				transfer_data: {
+					destination: course.instructor.stripe_account_id
+				}
+			},
+			cancel_url: `${process.env.STRIPE_CANCEL_URL}`,
+			//redirect url when success
+			success_url: `${process.env.STRIPE_SUCESS_URL}/${course._id}`
+		});
+		console.log(`Session Id ==>`, session.id);
+
+		//we store session info when we send request to stripe to process the payment for network issues and etc.
+		await User.findByIdAndUpdate((req.user as MongoUser)._id, { stripeSession: session }).exec();
+
+		return res.send(session.id);
+	} catch (err) {
+		console.log(err);
+		return res.send(err)
 	}
 };
